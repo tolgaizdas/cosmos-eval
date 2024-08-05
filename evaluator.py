@@ -7,7 +7,7 @@ from utils import load_task, load_model_and_tokenizer
 
 def get_parser():
     parser = argparse.ArgumentParser(description='cosmos-eval')
-    parser.add_argument('-m', '--model', type=str, required=True, help='Path to the model')
+    parser.add_argument('--model', type=str, required=True, help='Path to the model')
     parser.add_argument('--n_shots', type=int, default=0, help='Number of shots')
     parser.add_argument('--task', type=str, required=True, help='Task to evaluate')
     return parser

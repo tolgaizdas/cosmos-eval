@@ -1,14 +1,16 @@
+from abc import ABC, abstractmethod
+
 from tqdm import tqdm
 
 from utils import get_encoded_input, get_score
 
 
-class Task:
+class Task(ABC):
     def __init__(self, name):
         self.name = name
 
-        self.train_ds = None
-        self.valid_ds = None
+        self.train_ds = None  # Training dataset
+        self.valid_ds = None  # Validation dataset
 
         self.prompt_initial = None  # Initial prompt word for the task
         self.label_map = None  # Mapping of choice index to label
@@ -62,8 +64,10 @@ class Task:
 
         return acc, acc_norm
 
+    @abstractmethod
     def get_attributes(self, data):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def get_datasets(self):
-        raise NotImplementedError
+        pass
