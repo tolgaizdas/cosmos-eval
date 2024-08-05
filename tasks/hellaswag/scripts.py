@@ -78,7 +78,7 @@ def eval_task(model, tokenizer, train_ds, valid_ds, n_shots=10, device='cuda'):
         encoded_inputs = [get_encoded_input(f"{prompt} {ending}", tokenizer, device) for ending in endings]
 
         scores = [get_score(model, input_tensor) for input_tensor in encoded_inputs]
-        scores_norm = [score / len(ending) for score, ending in zip(scores, endings)]
+        scores_norm = [score / len(ending) if len(ending) > 0 else 0 for score, ending in zip(scores, endings)]
 
         predicted_index = scores.index(max(scores))
         predicted_index_norm = scores_norm.index(max(scores_norm))
@@ -89,7 +89,7 @@ def eval_task(model, tokenizer, train_ds, valid_ds, n_shots=10, device='cuda'):
         correct_norm += int(predicted_index_norm == label)
         total_norm += 1
 
-    acc = correct / total
-    acc_norm = correct_norm / total_norm
+    acc = correct / total if total > 0 else 0
+    acc_norm = correct_norm / total_norm if total_norm > 0 else 0
 
     return acc, acc_norm
