@@ -1,4 +1,3 @@
-import numpy as np
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -25,19 +24,16 @@ def get_results(model, tokenizer, prompt, choices, device):
     results, results_norm = [], []
     for choice in choices:
         unnormalized, normalized = 0, 0
+        byte_length = 0
         choice_ids = tokenizer.encode(choice, add_special_tokens=False)
         for c_id in choice_ids:
             log_probs = get_log_probs(model, prompt_ids)
             unnormalized += log_probs[c_id].item()  # Unnormalized (https://blog.eleuther.ai/multiple-choice-normalization/)
-            try:
-                byte_length = get_byte_length(tokenizer, [c_id])
-                normalized += unnormalized / byte_length  # Byte-length normalized (https://blog.eleuther.ai/multiple-choice-normalization/)
-            except ZeroDivisionError:
-                normalized = 0
             prompt_ids = torch.cat([prompt_ids, torch.tensor([c_id], device=device).unsqueeze(0)], dim=1)
+            byte_length += get_byte_length(tokenizer, c_id)
+        normalized += unnormalized / byte_length if byte_length > 0 else 0  # Byte-length normalized (https://blog.eleuther.ai/multiple-choice-normalization/)
         results.append(unnormalized)
         results_norm.append(normalized)
-
     return results, results_norm
 
 

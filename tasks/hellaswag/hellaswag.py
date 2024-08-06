@@ -1,4 +1,3 @@
-import datasets
 from datasets import load_dataset
 
 from tasks.hellaswag.utils import process_doc
