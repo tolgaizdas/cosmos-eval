@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from tqdm import tqdm
 
-from utils import get_encoded_input, get_score
+from utils import get_results
 
 
 class Task(ABC):
@@ -45,17 +45,15 @@ class Task(ABC):
             context, choices, gold, _ = self.get_attributes(data)
 
             prompt = self.generate_prompt(context, n_shots)
-            encoded_inputs = [get_encoded_input(f"{prompt} {choice}", tokenizer, device) for choice in choices]
+            results, results_norm = get_results(model, tokenizer, prompt, choices, device)
 
             # Accuracy
-            scores = [get_score(model, input_tensor) for input_tensor in encoded_inputs]
-            predicted_index = scores.index(max(scores))
+            predicted_index = results.index(max(results))
             correct += int(predicted_index == gold)
             total += 1
 
             # Normalized accuracy
-            scores_norm = [score / len(choice) if len(choice) > 0 else 0 for score, choice in zip(scores, choices)]
-            predicted_index_norm = scores_norm.index(max(scores_norm))
+            predicted_index_norm = results_norm.index(max(results_norm))
             correct_norm += int(predicted_index_norm == gold)
             total_norm += 1
 
