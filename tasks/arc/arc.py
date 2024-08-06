@@ -8,7 +8,6 @@ class ARC(Task):
         super().__init__('arc')
         self.train_ds, self.valid_ds = self.get_datasets()
         self.prompt_initial = "Soru"
-        self.label_map = ['A', 'B', 'C', 'D']
 
     def get_datasets(self):
         arc_ds = load_dataset("malhajar/arc-tr-v0.2")

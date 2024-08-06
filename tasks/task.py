@@ -13,7 +13,6 @@ class Task(ABC):
         self.valid_ds = None  # Validation dataset
 
         self.prompt_initial = None  # Initial prompt word for the task
-        self.label_map = None  # Mapping of choice index to label
 
     def generate_prompt(self, ctx, n_shots, include_choices=False):
         prompt = ""
@@ -25,8 +24,7 @@ class Task(ABC):
             prompt += f"{self.prompt_initial}: {context}\n"
             if include_choices:
                 for j in range(len(choices)):
-                    label = self.label_map[j] if self.label_map is not None else chr(j + 65)
-                    prompt += f"{label}. {choices[j]}\n"
+                    prompt += f"{chr(j + 65)}. {choices[j]}\n"
 
             prompt += f"Cevap: {gold_text}\n\n"
 
@@ -49,16 +47,16 @@ class Task(ABC):
 
             # Accuracy
             predicted_index = results.index(max(results))
-            correct += int(predicted_index == gold)
-            total += 1
+            correct += 1.0 if predicted_index == gold else 0.0
+            total += 1.0
 
             # Normalized accuracy
             predicted_index_norm = results_norm.index(max(results_norm))
-            correct_norm += int(predicted_index_norm == gold)
-            total_norm += 1
+            correct_norm += 1.0 if predicted_index_norm == gold else 0.0
+            total_norm += 1.0
 
-        acc = correct / total if total > 0 else 0
-        acc_norm = correct_norm / total_norm if total_norm > 0 else 0
+        acc = correct / total if total > 0 else 0.0
+        acc_norm = correct_norm / total_norm if total_norm > 0 else 0.0
 
         return acc, acc_norm
 
