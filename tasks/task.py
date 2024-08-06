@@ -35,8 +35,8 @@ class Task(ABC):
         return prompt
 
     def eval_task(self, model, tokenizer, n_shots, device):
-        correct_norm, total_norm = 0, 0
-        correct, total = 0, 0
+        correct_norm, total_norm = 0.0, 0.0
+        correct, total = 0.0, 0.0
 
         model.to(device)
         model.eval()
