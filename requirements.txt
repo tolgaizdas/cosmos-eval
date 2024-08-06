@@ -1,5 +1,5 @@
-datasets~=2.20.0
-tqdm~=4.66.4
-numpy~=2.0.1
-torch~=2.4.0
-transformers~=4.43.3
+datasets
+tqdm
+numpy
+torch
+transformers

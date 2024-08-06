@@ -20,6 +20,9 @@ class ARC(Task):
     def get_attributes(self, data):
         question = data["question"]
         choices = data["choices"]["text"]
-        gold = ord(data["answerKey"]) - 65  # A: 0, B: 1, C: 2, D: 3
+        try:
+            gold = int(data["answerKey"]) - 1  # 0, 1, 2, 3
+        except ValueError:
+            gold = ord(data["answerKey"]) - 65  # A: 0, B: 1, C: 2, D: 3
         gold_text = choices[gold]
         return question, choices, gold, gold_text

@@ -3,43 +3,38 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 
-def get_encoded_input(text, tokenizer, device):
-    return tokenizer.encode(text, return_tensors="pt").to(device)
-
-
 def get_byte_length(tokenizer, token_id):
-    # Decode the token ID to get the token string
     token_string = tokenizer.decode(token_id)
-
-    # Encode the token string to bytes
     token_bytes = token_string.encode('utf-8')
-
-    # Get the byte length
     byte_length = len(token_bytes)
-
     return byte_length
 
 
-def get_results(model, tokenizer, prompt, choices, device):
-    # Tokenize the prompt
-    prompt_ids = get_encoded_input(prompt, tokenizer, device)
-
-    # Get model output for the prompt
+def get_log_probs(model, encoded_text):
     with torch.no_grad():
-        outputs = model(prompt_ids, labels=prompt_ids)
+        outputs = model(encoded_text, labels=encoded_text)
         logits = outputs.logits
-
-    # Calculate probabilities
-    logits = logits[0, -1, :]  # Get logits for the next token
+    logits = logits[0, -1, :]  # Get the logits of the last token
     probs = torch.nn.functional.softmax(logits, dim=-1)
     log_probs = torch.log(probs)
+    return log_probs
 
-    # Calculate sum of log probabilities for each choice
+
+def get_results(model, tokenizer, prompt, choices, device):
+    prompt_ids = tokenizer.encode(prompt, return_tensors="pt").to(device)
     results, results_norm = [], []
     for choice in choices:
+        unnormalized, normalized = 0, 0
         choice_ids = tokenizer.encode(choice, add_special_tokens=False)
-        unnormalized = sum(log_probs[c_id].item() for c_id in choice_ids)
-        normalized = unnormalized / sum(get_byte_length(tokenizer, c_id) for c_id in choice_ids)
+        for c_id in choice_ids:
+            log_probs = get_log_probs(model, prompt_ids)
+            unnormalized += log_probs[c_id].item()  # Unnormalized (https://blog.eleuther.ai/multiple-choice-normalization/)
+            try:
+                byte_length = get_byte_length(tokenizer, [c_id])
+                normalized += unnormalized / byte_length  # Byte-length normalized (https://blog.eleuther.ai/multiple-choice-normalization/)
+            except ZeroDivisionError:
+                normalized = 0
+            prompt_ids = torch.cat([prompt_ids, torch.tensor([c_id], device=device).unsqueeze(0)], dim=1)
         results.append(unnormalized)
         results_norm.append(normalized)
 
