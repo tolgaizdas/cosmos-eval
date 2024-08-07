@@ -56,5 +56,8 @@ def load_task(task_name):
     elif task_name == 'arc':
         from tasks.arc.arc import ARC
         return ARC()
+    elif task_name == 'teog':
+        from tasks.teog.teog import TEOG
+        return TEOG()
     else:
         raise ValueError(f'Unknown task: {task_name}')

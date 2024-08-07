@@ -16,17 +16,22 @@ class Task(ABC):
 
     def generate_prompt(self, ctx, n_shots, include_choices=False):
         prompt = ""
-        random_data = self.train_ds.shuffle(seed=42).select(range(n_shots))
 
-        for i, data in enumerate(random_data):
-            context, choices, _, gold_text = self.get_attributes(data)
+        if self.train_ds is None and n_shots > 0:
+            print("Training dataset is not available. Setting n_shots to 0.")
+            n_shots = 0
 
-            prompt += f"{self.prompt_initial}: {context}\n"
-            if include_choices:
-                for j in range(len(choices)):
-                    prompt += f"{chr(j + 65)}. {choices[j]}\n"
+        if self.train_ds is not None and n_shots > 0:
+            random_data = self.train_ds.shuffle(seed=42).select(range(n_shots))
+            for i, data in enumerate(random_data):
+                context, choices, _, gold_text = self.get_attributes(data)
 
-            prompt += f"Cevap: {gold_text}\n\n"
+                prompt += f"{self.prompt_initial}: {context}\n"
+                if include_choices:
+                    for j in range(len(choices)):
+                        prompt += f"{chr(j + 65)}. {choices[j]}\n"
+
+                prompt += f"Cevap: {gold_text}\n\n"
 
         prompt += f"{self.prompt_initial}: {ctx}\n"
         prompt += "Cevap:"
@@ -40,7 +45,10 @@ class Task(ABC):
         model.eval()
 
         for data in tqdm(self.valid_ds, desc="Evaluating"):
-            context, choices, gold, _ = self.get_attributes(data)
+            try:
+                context, choices, gold, _ = self.get_attributes(data)
+            except Exception:
+                continue
 
             prompt = self.generate_prompt(context, n_shots)
             results, results_norm = get_results(model, tokenizer, prompt, choices, device)
