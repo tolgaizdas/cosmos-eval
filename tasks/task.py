@@ -51,6 +51,9 @@ class Task(ABC):
                 continue
 
             prompt = self.generate_prompt(context, n_shots)
+            if len(prompt) > 500:  # TODO: Remove this hard-coded limit
+                continue
+
             results, results_norm = get_results(model, tokenizer, prompt, choices, device)
 
             # Accuracy
