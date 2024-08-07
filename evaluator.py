@@ -10,7 +10,7 @@ def get_parser():
     parser.add_argument('--model', type=str, required=True, help='Path to the model')
     parser.add_argument('--n_shots', type=int, default=0, help='Number of shots')
     parser.add_argument('--task', type=str, required=True, help='Task to evaluate')
-    # parser.add_argument('--device', type=str, required=False, default='cpu', help='Device to use')
+    parser.add_argument('--device', type=str, required=False, default='cpu', help='Device to use')
     return parser
 
 
@@ -20,15 +20,18 @@ if __name__ == '__main__':
     model_path = args.model
     n_shots = args.n_shots
     task_name = args.task
+    device = args.device
 
     print(f'model_path: {model_path}')
     print(f'n_shots: {n_shots}')
     print(f'task_name: {task_name}')
+    print(f'device: {device}')
 
     model, tokenizer = load_model_and_tokenizer(model_path)
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print(f'Device: {device}')
+    if device == 'cuda' and not torch.cuda.is_available():
+        print('CUDA is not available. Using CPU instead.')
+        device = 'cpu'
 
     task = load_task(task_name)
 
