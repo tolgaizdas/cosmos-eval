@@ -6,23 +6,25 @@ from utils import get_results
 
 
 class Task(ABC):
-    def __init__(self, name):
+    def __init__(self, name, n_shots=0, prompt_initial="Context"):
         self.name = name
 
         self.train_ds = None  # Training dataset
         self.valid_ds = None  # Validation dataset
 
-        self.prompt_initial = None  # Initial prompt word for the task
+        self.n_shots = n_shots  # Number of shots
 
-    def generate_prompt(self, ctx, n_shots, include_choices=False):
+        self.prompt_initial = prompt_initial  # Initial prompt word for the task
+
+    def generate_prompt(self, ctx, include_choices=False):
         prompt = ""
 
-        if self.train_ds is None and n_shots > 0:
+        if self.train_ds is None and self.n_shots > 0:
             print("Training dataset is not available. Setting n_shots to 0.")
-            n_shots = 0
+            self.n_shots = 0
 
-        if self.train_ds is not None and n_shots > 0:
-            random_data = self.train_ds.shuffle(seed=42).select(range(n_shots))
+        if self.train_ds is not None and self.n_shots > 0:
+            random_data = self.train_ds.shuffle(seed=42).select(range(self.n_shots))
             for i, data in enumerate(random_data):
                 context, choices, _, gold_text = self.get_attributes(data)
 
@@ -37,7 +39,7 @@ class Task(ABC):
         prompt += "Cevap:"
         return prompt
 
-    def eval_task(self, model, tokenizer, n_shots, device):
+    def eval_task(self, model, tokenizer, device):
         correct_norm, total_norm = 0.0, 0.0
         correct, total = 0.0, 0.0
 
@@ -53,7 +55,7 @@ class Task(ABC):
             if len(context) > 500:  # TODO: Remove this hard-coded value
                 continue
 
-            prompt = self.generate_prompt(context, n_shots)
+            prompt = self.generate_prompt(context)
             results, results_norm = get_results(model, tokenizer, prompt, choices, device)
 
             # Accuracy

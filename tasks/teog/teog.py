@@ -5,16 +5,17 @@ from tasks.task import Task
 
 
 class TEOG(Task):
-    def __init__(self):
-        super().__init__('teog')
+    def __init__(self, n_shots=0):
+        super().__init__('teog', n_shots=n_shots)
         self.train_ds, self.valid_ds = self.get_datasets()
         self.prompt_initial = "Soru"
 
     def get_datasets(self):
-        teog = pd.read_csv("https://huggingface.co/datasets/aliardaf/LLMs-Turkish-TEOG-Leaderboard/resolve/main/teog_2013_text.csv")
+        teog = pd.read_csv(
+            "https://huggingface.co/datasets/aliardaf/LLMs-Turkish-TEOG-Leaderboard/resolve/main/teog_2013_text.csv")
         ds = Dataset.from_pandas(teog)
-        train_ds, valid_ds = None, ds
-        return train_ds, valid_ds
+        teog_train, teog_valid = None, ds
+        return teog_train, teog_valid
 
     def get_attributes(self, data):
         question = data["soru"]

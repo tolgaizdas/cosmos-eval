@@ -4,8 +4,8 @@ from tasks.task import Task
 
 
 class ARC(Task):
-    def __init__(self):
-        super().__init__('arc')
+    def __init__(self, n_shots=25):
+        super().__init__('arc', n_shots=n_shots)
         self.train_ds, self.valid_ds = self.get_datasets()
         self.prompt_initial = "Soru"
 

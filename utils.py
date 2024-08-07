@@ -47,17 +47,21 @@ def load_model_and_tokenizer(model_name):
     return model, tokenizer
 
 
-def load_task(task_name):
+def load_task(task_name, n_shots):
     task_name = task_name.lower().strip()
-
     if task_name == 'hellaswag':
         from tasks.hellaswag.hellaswag import Hellaswag
-        return Hellaswag()
+        task = Hellaswag(n_shots) if n_shots else Hellaswag()
     elif task_name == 'arc':
         from tasks.arc.arc import ARC
-        return ARC()
+        task = ARC(n_shots) if n_shots else ARC()
     elif task_name == 'teog':
         from tasks.teog.teog import TEOG
-        return TEOG()
+        task = TEOG(n_shots) if n_shots else TEOG()
     else:
         raise ValueError(f'Unknown task: {task_name}')
+
+    if n_shots is None:
+        print(f'n_shots is not provided. Using default value: {task.n_shots}')
+
+    return task
