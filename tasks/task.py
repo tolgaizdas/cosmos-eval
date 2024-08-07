@@ -50,10 +50,10 @@ class Task(ABC):
             except Exception:
                 continue
 
-            prompt = self.generate_prompt(context, n_shots)
-            if len(prompt) > 500:  # TODO: Remove this hard-coded limit
+            if len(context) > 500:  # TODO: Remove this hard-coded value
                 continue
 
+            prompt = self.generate_prompt(context, n_shots)
             results, results_norm = get_results(model, tokenizer, prompt, choices, device)
 
             # Accuracy
