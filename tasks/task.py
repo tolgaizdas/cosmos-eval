@@ -39,14 +39,20 @@ class Task(ABC):
         prompt += "Cevap:"
         return prompt
 
-    def eval_task(self, model, tokenizer, device):
+    def eval_task(self, model, tokenizer, device, limit):
         correct_norm, total_norm = 0.0, 0.0
         correct, total = 0.0, 0.0
 
         model.to(device)
         model.eval()
 
-        for data in tqdm(self.valid_ds, desc="Evaluating"):
+        if limit > self.valid_ds.num_rows:
+            print(f"Limit is greater than the number of samples in the dataset. Setting limit to {self.valid_ds.num_rows}.")
+            limit = self.valid_ds.num_rows
+
+        ds = self.valid_ds if limit is None else self.valid_ds.select(range(limit))
+
+        for data in tqdm(ds, desc="Evaluating"):
             try:
                 context, choices, gold, _ = self.get_attributes(data)
             except Exception:
