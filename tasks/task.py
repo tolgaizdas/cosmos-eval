@@ -49,11 +49,12 @@ class Task(ABC):
         model.to(device)
         model.eval()
 
-        if limit > self.valid_ds.num_rows:
-            print(f"Limit is greater than the number of samples in the dataset. Setting limit to {self.valid_ds.num_rows}.")
-            limit = self.valid_ds.num_rows
-
-        ds = self.valid_ds if limit is None else self.valid_ds.select(range(limit))
+        ds = self.valid_ds
+        if limit:
+            if limit > self.valid_ds.num_rows:
+                print(f"Limit is greater than the number of samples in the dataset. Setting limit to {self.valid_ds.num_rows}.")
+                limit = self.valid_ds.num_rows
+            ds = self.valid_ds.select(range(limit))
 
         for data in tqdm(ds, desc="Evaluating"):
             try:
