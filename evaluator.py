@@ -37,7 +37,10 @@ if __name__ == '__main__':
 
     task = load_task(task_name, n_shots)
 
-    acc, acc_norm = task.eval_task(model, tokenizer, device, limit)
+    acc, acc_norm, faulty_prompts, faulty_prompts_norm = task.eval_task(model, tokenizer, device, limit)  # TODO: limit attribute can be added to Task class
 
     print(f'\nacc: {acc}')
     print(f'acc_norm: {acc_norm}')
+
+    # print(f'faulty_prompts: {faulty_prompts}')
+    # print(f'faulty_prompts_norm: {faulty_prompts_norm}')
