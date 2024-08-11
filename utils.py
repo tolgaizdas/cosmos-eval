@@ -51,13 +51,13 @@ def load_task(task_name, n_shots):
     task_name = task_name.lower().strip()
     if task_name == 'hellaswag':
         from tasks.hellaswag.hellaswag import Hellaswag
-        task = Hellaswag(n_shots) if n_shots else Hellaswag()
+        task = Hellaswag(n_shots) if n_shots is not None else Hellaswag()
     elif task_name == 'arc':
         from tasks.arc.arc import ARC
-        task = ARC(n_shots) if n_shots else ARC()
+        task = ARC(n_shots) if n_shots is not None else ARC()
     elif task_name == 'teog':
         from tasks.teog.teog import TEOG
-        task = TEOG(n_shots) if n_shots else TEOG()
+        task = TEOG(n_shots) if n_shots is not None else TEOG()
     else:
         raise ValueError(f'Unknown task: {task_name}')
 
