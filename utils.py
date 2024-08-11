@@ -20,11 +20,11 @@ def get_log_probs(model, encoded_text):
 
 
 def get_results(model, tokenizer, prompt, choices, device):
-    prompt_ids = tokenizer.encode(prompt, return_tensors="pt").to(device)
     results, results_norm = [], []
     for choice in choices:
         unnormalized, normalized = 0.0, 0.0
         byte_length = 0
+        prompt_ids = tokenizer.encode(prompt, return_tensors="pt").to(device)  # TODO: Creating the same prompt_ids for each choice is not efficient
         choice_ids = tokenizer.encode(choice, add_special_tokens=False)
 
         for c_id in choice_ids:
