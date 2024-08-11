@@ -11,6 +11,7 @@ def get_parser():
     parser.add_argument('--n_shots', type=int, required=False, default=None, help='Number of shots')
     parser.add_argument('--task', type=str, required=True, help='Task to evaluate')
     parser.add_argument('--device', type=str, required=False, default='cpu', help='Device to use')
+    parser.add_argument('--limit', type=int, required=False, default=None, help='Limit the number of samples')
     return parser
 
 
@@ -21,6 +22,7 @@ if __name__ == '__main__':
     n_shots = args.n_shots
     task_name = args.task
     device = args.device
+    limit = args.limit
 
     for arg in vars(args):
         attr = getattr(args, arg)
@@ -35,7 +37,10 @@ if __name__ == '__main__':
 
     task = load_task(task_name, n_shots)
 
-    acc, acc_norm = task.eval_task(model, tokenizer, device)
+    acc, acc_norm, faulty_prompts, faulty_prompts_norm = task.eval_task(model, tokenizer, device, limit)  # TODO: limit attribute can be added to Task class
 
     print(f'\nacc: {acc}')
     print(f'acc_norm: {acc_norm}')
+
+    # print(f'faulty_prompts: {faulty_prompts}')
+    # print(f'faulty_prompts_norm: {faulty_prompts_norm}')

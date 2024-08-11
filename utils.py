@@ -20,11 +20,11 @@ def get_log_probs(model, encoded_text):
 
 
 def get_results(model, tokenizer, prompt, choices, device):
-    prompt_ids = tokenizer.encode(prompt, return_tensors="pt").to(device)
     results, results_norm = [], []
     for choice in choices:
         unnormalized, normalized = 0.0, 0.0
         byte_length = 0
+        prompt_ids = tokenizer.encode(prompt, return_tensors="pt").to(device)  # TODO: Creating the same prompt_ids for each choice is not efficient
         choice_ids = tokenizer.encode(choice, add_special_tokens=False)
 
         for c_id in choice_ids:
@@ -51,13 +51,13 @@ def load_task(task_name, n_shots):
     task_name = task_name.lower().strip()
     if task_name == 'hellaswag':
         from tasks.hellaswag.hellaswag import Hellaswag
-        task = Hellaswag(n_shots) if n_shots else Hellaswag()
+        task = Hellaswag(n_shots) if n_shots is not None else Hellaswag()
     elif task_name == 'arc':
         from tasks.arc.arc import ARC
-        task = ARC(n_shots) if n_shots else ARC()
+        task = ARC(n_shots) if n_shots is not None else ARC()
     elif task_name == 'teog':
         from tasks.teog.teog import TEOG
-        task = TEOG(n_shots) if n_shots else TEOG()
+        task = TEOG(n_shots) if n_shots is not None else TEOG()
     else:
         raise ValueError(f'Unknown task: {task_name}')
 
