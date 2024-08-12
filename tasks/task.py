@@ -39,12 +39,12 @@ class Task(ABC):
         prompt += "Cevap:"
         return prompt
 
-    def eval_task(self, model, tokenizer, device, limit):
+    def eval_task(self, model, tokenizer, device, limit, faulty):
         correct, total = 0.0, 0.0
         correct_norm, total_norm = 0.0, 0.0
-
-        faulty_prompts = []
-        faulty_prompts_norm = []
+        
+        faulty_prompts = [] if faulty else None
+        faulty_prompts_norm = [] if faulty else None
 
         model.to(device)
         model.eval()
@@ -70,14 +70,14 @@ class Task(ABC):
 
             # Accuracy
             predicted_index = results.index(max(results))
-            if predicted_index != gold:
+            if faulty and predicted_index != gold:
                 faulty_prompts.append(prompt)
             correct += 1.0 if predicted_index == gold else 0.0
             total += 1.0
 
             # Normalized accuracy
             predicted_index_norm = results_norm.index(max(results_norm))
-            if predicted_index_norm != gold:
+            if faulty and predicted_index_norm != gold:
                 faulty_prompts_norm.append(prompt)
             correct_norm += 1.0 if predicted_index_norm == gold else 0.0
             total_norm += 1.0

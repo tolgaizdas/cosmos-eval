@@ -12,6 +12,7 @@ def get_parser():
     parser.add_argument('--task', type=str, required=True, help='Task to evaluate')
     parser.add_argument('--device', type=str, required=False, default='cpu', help='Device to use')
     parser.add_argument('--limit', type=int, required=False, default=None, help='Limit the number of samples')
+    parser.add_argument('--faulty', type=bool, required=False, default=False, help='Print faulty prompts')
     return parser
 
 
@@ -23,6 +24,7 @@ if __name__ == '__main__':
     task_name = args.task
     device = args.device
     limit = args.limit
+    faulty = args.faulty
 
     for arg in vars(args):
         attr = getattr(args, arg)
@@ -37,10 +39,11 @@ if __name__ == '__main__':
 
     task = load_task(task_name, n_shots)
 
-    acc, acc_norm, faulty_prompts, faulty_prompts_norm = task.eval_task(model, tokenizer, device, limit)  # TODO: limit attribute can be added to Task class
+    acc, acc_norm, faulty_prompts, faulty_prompts_norm = task.eval_task(model, tokenizer, device, limit, faulty)  # TODO: limit attribute can be added to Task class
 
     print(f'\nacc: {acc}')
     print(f'acc_norm: {acc_norm}')
 
-    # print(f'faulty_prompts: {faulty_prompts}')
-    # print(f'faulty_prompts_norm: {faulty_prompts_norm}')
+    if faulty:
+        print(f'faulty_prompts: {faulty_prompts}')
+        print(f'faulty_prompts_norm: {faulty_prompts_norm}')
