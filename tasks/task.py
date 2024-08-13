@@ -25,7 +25,7 @@ class Task(ABC):
 
         if self.train_ds is not None and self.n_shots > 0:
             random_data = self.train_ds.shuffle(seed=42).select(range(self.n_shots))
-            for i, data in enumerate(random_data):
+            for data in random_data:
                 context, choices, _, gold_text = self.get_attributes(data)
 
                 prompt += f"{self.prompt_initial}: {context}\n"

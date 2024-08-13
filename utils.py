@@ -52,7 +52,7 @@ def load_task(task_name, n_shots):
     task_name = task_name.lower().strip()
     if task_name == 'hellaswag':
         from tasks.hellaswag.hellaswag import Hellaswag
-        task = Hellaswag(n_shots) if n_shots is not None else Hellaswag()
+        task = Hellaswag(n_shots) if n_shots is not None else Hellaswag()  # TODO: default n_shots can be handled in the task class
     elif task_name == 'arc':
         from tasks.arc.arc import ARC
         task = ARC(n_shots) if n_shots is not None else ARC()
