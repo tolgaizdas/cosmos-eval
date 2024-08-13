@@ -24,7 +24,7 @@ class Task(ABC):
             self.n_shots = 0
 
         if self.train_ds is not None and self.n_shots > 0:
-            random_data = self.train_ds.shuffle(seed=42).select(range(self.n_shots))
+            random_data = self.train_ds.shuffle(seed=42).select(range(self.n_shots))  # TODO: Random data should not include the context (ctx)
             for data in random_data:
                 context, choices, _, gold_text = self.get_attributes(data)
 
@@ -60,9 +60,6 @@ class Task(ABC):
             try:
                 context, choices, gold, _ = self.get_attributes(data)
             except Exception:
-                continue
-
-            if len(context) > 500:  # TODO: Remove this hard-coded value
                 continue
 
             prompt = self.generate_prompt(context)

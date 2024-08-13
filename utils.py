@@ -26,6 +26,8 @@ def get_results(model, tokenizer, prompt, choices, device):
         unnormalized, normalized = 0.0, 0.0
         byte_length = 0
         current_prompt_ids = prompt_ids.clone()
+        if current_prompt_ids.shape[1] > tokenizer.model_max_length:
+            current_prompt_ids = current_prompt_ids[:, -tokenizer.model_max_length:] # Truncate the prompt at the beginning (to keep the most recent context)
         choice_ids = tokenizer.encode(choice, add_special_tokens=False)
 
         for c_id in choice_ids:
