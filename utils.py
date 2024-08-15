@@ -2,6 +2,16 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 
+def get_log_likelihood(model, input_ids, target_ids=None):
+    if target_ids is None:
+        target_ids = input_ids
+    
+    with torch.no_grad():
+        outputs = model(input_ids, labels=target_ids)
+        neg_log_likelihood = outputs.loss
+    return -neg_log_likelihood.item()
+
+
 def get_byte_length(tokenizer, token_id):
     token_string = tokenizer.decode(token_id)
     token_bytes = token_string.encode('utf-8')
@@ -9,9 +19,9 @@ def get_byte_length(tokenizer, token_id):
     return byte_length
 
 
-def get_log_probs(model, encoded_text):
+def get_log_probs(model, input_ids):
     with torch.no_grad():
-        outputs = model(encoded_text, labels=encoded_text)
+        outputs = model(input_ids, labels=input_ids)
         logits = outputs.logits
     logits = logits[0, -1, :]  # Get the logits of the last token
     probs = torch.nn.functional.softmax(logits, dim=-1)
@@ -41,6 +51,7 @@ def get_results(model, tokenizer, prompt, choices, device):
         results_norm.append(normalized)
     return results, results_norm
 
+
 """
  https://huggingface.co/docs/transformers/en/perplexity
  TODO: This function is taken from the Hugging Face documentation. It can be modified to be more efficient.
@@ -61,14 +72,7 @@ def perplexity(model, tokenizer, text, device):
         target_ids = input_ids.clone()
         target_ids[:, :-trg_len] = -100  # Mask the tokens before the target sequence length
 
-        with torch.no_grad():
-            outputs = model(input_ids, labels=target_ids)
-
-            # loss is calculated using CrossEntropyLoss which averages over valid labels
-            # N.B. the model only calculates loss over trg_len - 1 labels, because it internally shifts the labels
-            # to the left by 1.
-            neg_log_likelihood = outputs.loss
-
+        neg_log_likelihood = -1 * get_log_likelihood(model, input_ids, target_ids)
         nlls.append(neg_log_likelihood)
 
         prev_end_loc = end_loc
@@ -77,6 +81,7 @@ def perplexity(model, tokenizer, text, device):
 
     ppl = torch.exp(torch.stack(nlls).mean())
     return ppl.item()
+
 
 def load_model_and_tokenizer(model_name):
     model = AutoModelForCausalLM.from_pretrained(model_name)
