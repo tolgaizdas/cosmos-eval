@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from tqdm import tqdm
 
-from utils import get_results
+from utils import get_results, perplexity
 
 
 class Task(ABC):
@@ -24,8 +24,8 @@ class Task(ABC):
             self.n_shots = 0
 
         if self.train_ds is not None and self.n_shots > 0:
-            random_data = self.train_ds.shuffle(seed=42).select(range(self.n_shots))
-            for i, data in enumerate(random_data):
+            random_data = self.train_ds.shuffle(seed=42).select(range(self.n_shots))  # TODO: Random data should not include the context (ctx)
+            for data in random_data:
                 context, choices, _, gold_text = self.get_attributes(data)
 
                 prompt += f"{self.prompt_initial}: {context}\n"
@@ -39,53 +39,64 @@ class Task(ABC):
         prompt += "Cevap:"
         return prompt
 
-    def eval_task(self, model, tokenizer, device, limit, faulty):
-        correct, total = 0.0, 0.0
-        correct_norm, total_norm = 0.0, 0.0
+    def eval_task(self, model, tokenizer, device, metrics, limit, faulty):
+        model.to(device)
+        model.eval()
+
+        ret = {metric: 0.0 for metric in metrics}
+        total_samples = 0
         
         faulty_prompts = [] if faulty else None
         faulty_prompts_norm = [] if faulty else None
 
-        model.to(device)
-        model.eval()
-
-        ds = self.valid_ds
-        if limit:
-            if limit > self.valid_ds.num_rows:
-                print(f"Limit is greater than the number of samples in the dataset. Setting limit to {self.valid_ds.num_rows}.")
-                limit = self.valid_ds.num_rows
-            ds = self.valid_ds.select(range(limit))
-
+        ds = self.limit_dataset(limit)
         for data in tqdm(ds, desc="Evaluating"):
             try:
                 context, choices, gold, _ = self.get_attributes(data)
             except Exception:
                 continue
+            
+            if "acc" in metrics or "acc_norm" in metrics:
+                prompt = self.generate_prompt(context)
+                results, results_norm = get_results(model, tokenizer, prompt, choices, device)
 
-            if len(context) > 500:  # TODO: Remove this hard-coded value
-                continue
+                # Accuracy
+                if "acc" in metrics:
+                    predicted_index = results.index(max(results))
+                    if faulty and predicted_index != gold:
+                        faulty_prompts.append(prompt)
+                    ret["acc"] += 1.0 if predicted_index == gold else 0.0
 
-            prompt = self.generate_prompt(context)
-            results, results_norm = get_results(model, tokenizer, prompt, choices, device)
+                # Normalized accuracy
+                if "acc_norm" in metrics:
+                    predicted_index_norm = results_norm.index(max(results_norm))
+                    if faulty and predicted_index_norm != gold:
+                        faulty_prompts_norm.append(prompt)
+                    ret["acc_norm"] += 1.0 if predicted_index_norm == gold else 0.0
+            
+            # Perplexity
+            if "perplexity" in metrics:
+                ret["perplexity"] += perplexity(model, tokenizer, context, device)
+            
+            total_samples += 1
 
-            # Accuracy
-            predicted_index = results.index(max(results))
-            if faulty and predicted_index != gold:
-                faulty_prompts.append(prompt)
-            correct += 1.0 if predicted_index == gold else 0.0
-            total += 1.0
+        if total_samples > 0:
+            for metric in metrics:
+                ret[metric] /= total_samples
+        
 
-            # Normalized accuracy
-            predicted_index_norm = results_norm.index(max(results_norm))
-            if faulty and predicted_index_norm != gold:
-                faulty_prompts_norm.append(prompt)
-            correct_norm += 1.0 if predicted_index_norm == gold else 0.0
-            total_norm += 1.0
+        return ret, faulty_prompts, faulty_prompts_norm
+    
+    def limit_dataset(self, limit):
+        if limit is None:
+            return self.valid_ds
 
-        acc = correct / total if total > 0 else 0.0
-        acc_norm = correct_norm / total_norm if total_norm > 0 else 0.0
-
-        return acc, acc_norm, faulty_prompts, faulty_prompts_norm
+        if limit > self.valid_ds.num_rows:
+            print(f"Limit is greater than the number of samples in the dataset. Setting limit to {self.valid_ds.num_rows}.")
+            limit = self.valid_ds.num_rows
+        
+        ds = self.valid_ds.select(range(limit))
+        return ds
 
     @abstractmethod
     def get_attributes(self, data):
