@@ -9,7 +9,7 @@ def get_log_likelihood(model, input_ids, target_ids=None):
     with torch.no_grad():
         outputs = model(input_ids, labels=target_ids)
         neg_log_likelihood = outputs.loss
-    return -neg_log_likelihood.item()
+    return -neg_log_likelihood
 
 
 def get_byte_length(tokenizer, token_id):
@@ -78,9 +78,9 @@ def perplexity(model, tokenizer, text, device):
         prev_end_loc = end_loc
         if end_loc == seq_len:
             break
-
+    
     ppl = torch.exp(torch.stack(nlls).mean())
-    return ppl.item()
+    return ppl
 
 
 def load_model_and_tokenizer(model_name):
