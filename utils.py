@@ -80,7 +80,7 @@ def perplexity(model, tokenizer, text, device):
             break
     
     ppl = torch.exp(torch.stack(nlls).mean())
-    return ppl
+    return ppl.item()
 
 
 def load_model_and_tokenizer(model_name):

@@ -39,12 +39,12 @@ class Task(ABC):
         prompt += "Cevap:"
         return prompt
 
-    def eval_task(self, model, tokenizer, device, limit, faulty):
+    def eval_task(self, model, tokenizer, device, metrics, limit, faulty):
         model.to(device)
         model.eval()
 
-        correct, total = 0.0, 0.0
-        correct_norm, total_norm = 0.0, 0.0
+        ret = {metric: 0.0 for metric in metrics}
+        total_samples = 0
         
         faulty_prompts = [] if faulty else None
         faulty_prompts_norm = [] if faulty else None
@@ -55,43 +55,37 @@ class Task(ABC):
                 context, choices, gold, _ = self.get_attributes(data)
             except Exception:
                 continue
+            
+            if "acc" in metrics or "acc_norm" in metrics:
+                prompt = self.generate_prompt(context)
+                results, results_norm = get_results(model, tokenizer, prompt, choices, device)
 
-            prompt = self.generate_prompt(context)
-            results, results_norm = get_results(model, tokenizer, prompt, choices, device)
+                # Accuracy
+                if "acc" in metrics:
+                    predicted_index = results.index(max(results))
+                    if faulty and predicted_index != gold:
+                        faulty_prompts.append(prompt)
+                    ret["acc"] += 1.0 if predicted_index == gold else 0.0
 
-            # Accuracy
-            predicted_index = results.index(max(results))
-            if faulty and predicted_index != gold:
-                faulty_prompts.append(prompt)
-            correct += 1.0 if predicted_index == gold else 0.0
-            total += 1.0
+                # Normalized accuracy
+                if "acc_norm" in metrics:
+                    predicted_index_norm = results_norm.index(max(results_norm))
+                    if faulty and predicted_index_norm != gold:
+                        faulty_prompts_norm.append(prompt)
+                    ret["acc_norm"] += 1.0 if predicted_index_norm == gold else 0.0
+            
+            # Perplexity
+            if "perplexity" in metrics:
+                ret["perplexity"] += perplexity(model, tokenizer, context, device)
+            
+            total_samples += 1
 
-            # Normalized accuracy
-            predicted_index_norm = results_norm.index(max(results_norm))
-            if faulty and predicted_index_norm != gold:
-                faulty_prompts_norm.append(prompt)
-            correct_norm += 1.0 if predicted_index_norm == gold else 0.0
-            total_norm += 1.0
+        if total_samples > 0:
+            for metric in metrics:
+                ret[metric] /= total_samples
+        
 
-        acc = correct / total if total > 0 else 0.0
-        acc_norm = correct_norm / total_norm if total_norm > 0 else 0.0
-
-        return acc, acc_norm, faulty_prompts, faulty_prompts_norm
-
-    def eval_perplexity(self, model, tokenizer, device, limit):
-        model.to(device)
-        model.eval()
-
-        avg = 0.0
-        samples = 0
-
-        ds = self.limit_dataset(limit)
-        for data in tqdm(ds, desc="Evaluating"):
-            ctx, _, _, _ = self.get_attributes(data)
-            avg += perplexity(model, tokenizer, ctx, device)
-            samples += 1
-        perplexity_score = avg / samples if samples > 0 else 0.0
-        return perplexity_score.item()
+        return ret, faulty_prompts, faulty_prompts_norm
     
     def limit_dataset(self, limit):
         if limit is None:

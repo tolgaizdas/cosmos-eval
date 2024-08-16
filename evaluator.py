@@ -12,7 +12,10 @@ def get_parser():
     parser.add_argument('--task', type=str, required=True, help='Task to evaluate')
     parser.add_argument('--device', type=str, required=False, default='cpu', help='Device to use')
     parser.add_argument('--limit', type=int, required=False, default=None, help='Limit the number of samples')
-    parser.add_argument('--faulty', type=int, required=False, default=0, help='Print faulty prompts (0: False, 1: True)')  # bool is not supported therefore int is used
+    parser.add_argument('--print-faulty', action='store_true', help='Print faulty prompts')
+    parser.add_argument('--exclude-acc', action='store_true', help='Exclude accuracy')
+    parser.add_argument('--exclude-acc-norm', action='store_true', help='Exclude normalized accuracy')
+    parser.add_argument('--exclude-perplexity', action='store_true', help='Exclude perplexity')
     return parser
 
 
@@ -28,7 +31,7 @@ if __name__ == '__main__':
     task_name = args.task
     device = args.device
     limit = args.limit
-    faulty = bool(args.faulty)
+    faulty = args.print_faulty
 
     if device == 'cuda' and not torch.cuda.is_available():
         print('CUDA is not available. Using CPU instead.')
@@ -38,10 +41,17 @@ if __name__ == '__main__':
 
     task = load_task(task_name, n_shots)
 
-    acc, acc_norm, faulty_prompts, faulty_prompts_norm = task.eval_task(model, tokenizer, device, limit, faulty)  # TODO: limit attribute can be added to Task class
+    metrics = ["acc", "acc_norm", "perplexity"]
+    if args.exclude_acc:
+        metrics.remove("acc")
+    if args.exclude_acc_norm:
+        metrics.remove("acc_norm")
+    if args.exclude_perplexity:
+        metrics.remove("perplexity")
+    
+    ret, faulty_prompts, faulty_prompts_norm = task.eval_task(model, tokenizer, device, metrics, limit, faulty)  # TODO: limit attribute can be added to Task class
 
-    print(f'\nacc: {acc}')
-    print(f'acc_norm: {acc_norm}')
+    print(f'ret: {ret}')
 
     if faulty:
         print(f'faulty_prompts: {faulty_prompts}')
