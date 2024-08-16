@@ -102,6 +102,9 @@ def load_task(task_name, n_shots):
     elif task_name == 'teog':
         from tasks.teog.teog import TEOG
         task = TEOG(n_shots) if n_shots is not None else TEOG()
+    elif task_name == 'perp':
+        from tasks.perp.perp import Perp
+        task = Perp(n_shots) if n_shots is not None else Perp()
     else:
         raise ValueError(f'Unknown task: {task_name}')
 

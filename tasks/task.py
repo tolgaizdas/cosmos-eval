@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from tqdm import tqdm
 
-from utils import get_results
+from utils import get_results, perplexity
 
 
 class Task(ABC):
@@ -40,22 +40,16 @@ class Task(ABC):
         return prompt
 
     def eval_task(self, model, tokenizer, device, limit, faulty):
+        model.to(device)
+        model.eval()
+
         correct, total = 0.0, 0.0
         correct_norm, total_norm = 0.0, 0.0
         
         faulty_prompts = [] if faulty else None
         faulty_prompts_norm = [] if faulty else None
 
-        model.to(device)
-        model.eval()
-
-        ds = self.valid_ds
-        if limit:
-            if limit > self.valid_ds.num_rows:
-                print(f"Limit is greater than the number of samples in the dataset. Setting limit to {self.valid_ds.num_rows}.")
-                limit = self.valid_ds.num_rows
-            ds = self.valid_ds.select(range(limit))
-
+        ds = self.limit_dataset(limit)
         for data in tqdm(ds, desc="Evaluating"):
             try:
                 context, choices, gold, _ = self.get_attributes(data)
@@ -83,6 +77,32 @@ class Task(ABC):
         acc_norm = correct_norm / total_norm if total_norm > 0 else 0.0
 
         return acc, acc_norm, faulty_prompts, faulty_prompts_norm
+
+    def eval_perplexity(self, model, tokenizer, device, limit):
+        model.to(device)
+        model.eval()
+
+        avg = 0.0
+        samples = 0
+
+        ds = self.limit_dataset(limit)
+        for data in tqdm(ds, desc="Evaluating"):
+            ctx, _, _, _ = self.get_attributes(data)
+            avg += perplexity(model, tokenizer, ctx, device)
+            samples += 1
+        perplexity_score = avg / samples if samples > 0 else 0.0
+        return perplexity_score.item()
+    
+    def limit_dataset(self, limit):
+        if limit is None:
+            return self.valid_ds
+
+        if limit > self.valid_ds.num_rows:
+            print(f"Limit is greater than the number of samples in the dataset. Setting limit to {self.valid_ds.num_rows}.")
+            limit = self.valid_ds.num_rows
+        
+        ds = self.valid_ds.select(range(limit))
+        return ds
 
     @abstractmethod
     def get_attributes(self, data):
