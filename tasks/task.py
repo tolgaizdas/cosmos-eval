@@ -4,6 +4,8 @@ from tqdm import tqdm
 
 from utils import get_results, perplexity
 
+import math
+
 
 class Task(ABC):
     def __init__(self, name, n_shots=0, prompt_initial="Context"):
@@ -76,7 +78,9 @@ class Task(ABC):
             
             # Perplexity
             if "perplexity" in metrics:
-                ret["perplexity"] += perplexity(model, tokenizer, context, device)
+                perp = perplexity(model, tokenizer, context, device)
+                if not math.isnan(perp):
+                  ret["perplexity"] += perp
             
             total_samples += 1
 
