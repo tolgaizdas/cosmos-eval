@@ -36,7 +36,7 @@ if __name__ == '__main__':
     if device == 'cuda' and not torch.cuda.is_available():
         print('CUDA is not available. Using CPU instead.')
         device = 'cpu'
-    
+
     model, tokenizer = load_model_and_tokenizer(model_path)
 
     task = load_task(task_name, n_shots)

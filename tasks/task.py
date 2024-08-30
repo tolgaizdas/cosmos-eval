@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
 
+import math
 from tqdm import tqdm
 
 from utils import get_results, perplexity
-
-import math
 
 
 class Task(ABC):
@@ -26,7 +25,7 @@ class Task(ABC):
             self.n_shots = 0
 
         if self.train_ds is not None and self.n_shots > 0:
-            random_data = self.train_ds.shuffle(seed=42).select(range(self.n_shots))  # TODO: Random data should not include the context (ctx)
+            random_data = self.train_ds.shuffle(seed=42).select(range(self.n_shots))  # TODO: Random data should not include the context (ctx)
             for data in random_data:
                 context, choices, _, gold_text = self.get_attributes(data)
 
@@ -47,7 +46,7 @@ class Task(ABC):
 
         ret = {metric: 0.0 for metric in metrics}
         total_samples = 0
-        
+
         faulty_prompts = [] if faulty else None
         faulty_prompts_norm = [] if faulty else None
 
@@ -57,7 +56,7 @@ class Task(ABC):
                 context, choices, gold, _ = self.get_attributes(data)
             except Exception:
                 continue
-            
+
             if "acc" in metrics or "acc_norm" in metrics:
                 prompt = self.generate_prompt(context)
                 results, results_norm = get_results(model, tokenizer, prompt, choices, device)
@@ -75,22 +74,21 @@ class Task(ABC):
                     if faulty and predicted_index_norm != gold:
                         faulty_prompts_norm.append(prompt)
                     ret["acc_norm"] += 1.0 if predicted_index_norm == gold else 0.0
-            
+
             # Perplexity
             if "perplexity" in metrics:
                 perp = perplexity(model, tokenizer, context, device)
                 if not math.isnan(perp):
-                  ret["perplexity"] += perp
-            
+                    ret["perplexity"] += perp
+
             total_samples += 1
 
         if total_samples > 0:
             for metric in metrics:
                 ret[metric] /= total_samples
-        
 
         return ret, faulty_prompts, faulty_prompts_norm
-    
+
     def limit_dataset(self, limit):
         if limit is None:
             return self.valid_ds
@@ -98,7 +96,7 @@ class Task(ABC):
         if limit > self.valid_ds.num_rows:
             print(f"Limit is greater than the number of samples in the dataset. Setting limit to {self.valid_ds.num_rows}.")
             limit = self.valid_ds.num_rows
-        
+
         ds = self.valid_ds.select(range(limit))
         return ds
 

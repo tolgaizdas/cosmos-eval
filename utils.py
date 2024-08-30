@@ -5,7 +5,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 def get_log_likelihood(model, input_ids, target_ids=None):
     if target_ids is None:
         target_ids = input_ids
-    
+
     with torch.no_grad():
         outputs = model(input_ids, labels=target_ids)
         neg_log_likelihood = outputs.loss
@@ -52,15 +52,15 @@ def get_results(model, tokenizer, prompt, choices, device):
     return results, results_norm
 
 
-"""
- https://huggingface.co/docs/transformers/en/perplexity
- TODO: This function is taken from the Hugging Face documentation. It can be modified to be more efficient.
-"""
 def perplexity(model, tokenizer, text, device):
+    """
+     https://huggingface.co/docs/transformers/en/perplexity
+     TODO: This function is taken from the Hugging Face documentation. It can be modified to be more efficient.
+    """
     encodings = tokenizer(text, return_tensors="pt").to(device)
 
     max_length = model.config.n_positions
-    stride = 512  # TODO: Stride can be an argument or a parameter of the model
+    stride = 512  # TODO: Stride can be an argument or a parameter of the model
     seq_len = encodings.input_ids.size(1)
 
     nlls = []
@@ -70,7 +70,7 @@ def perplexity(model, tokenizer, text, device):
         trg_len = end_loc - prev_end_loc  # May be different from stride on last loop
         input_ids = encodings.input_ids[:, begin_loc:end_loc]
         target_ids = input_ids.clone()
-        target_ids[:, :-trg_len] = -100  # Mask the tokens before the target sequence length
+        target_ids[:, :-trg_len] = -100  # Mask the tokens before the target sequence length
 
         neg_log_likelihood = -1 * get_log_likelihood(model, input_ids, target_ids)
         nlls.append(neg_log_likelihood)
@@ -78,7 +78,7 @@ def perplexity(model, tokenizer, text, device):
         prev_end_loc = end_loc
         if end_loc == seq_len:
             break
-    
+
     ppl = torch.exp(torch.stack(nlls).mean())
     return ppl.item()
 
@@ -95,7 +95,7 @@ def load_task(task_name, n_shots):
     task_name = task_name.lower().strip()
     if task_name == 'hellaswag':
         from tasks.hellaswag.hellaswag import Hellaswag
-        task = Hellaswag(n_shots) if n_shots is not None else Hellaswag()  # TODO: default n_shots can be handled in the task class
+        task = Hellaswag(n_shots) if n_shots is not None else Hellaswag()  # TODO: default n_shots can be handled in the task class
     elif task_name == 'arc':
         from tasks.arc.arc import ARC
         task = ARC(n_shots) if n_shots is not None else ARC()
