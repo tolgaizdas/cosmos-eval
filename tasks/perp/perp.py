@@ -1,6 +1,8 @@
-from datasets import load_dataset
+from datasets import load_dataset, Dataset
 
 from tasks.task import Task
+
+import pandas as pd
 
 
 class Perp(Task):
@@ -9,9 +11,10 @@ class Perp(Task):
         self.train_ds, self.valid_ds = self.get_datasets()
 
     def get_datasets(self):
-        ds = load_dataset("malhajar/arc-tr-v0.2", split="test")  # TODO: Load the perplexity dataset instead
+        df = pd.read_csv("tasks/perp/dataset/perp.csv")
+        ds = Dataset.from_pandas(df)
         return None, ds
 
     def get_attributes(self, data):
-        context = data["question"]  # TODO: Change this to the context attribute
+        context = data["Sentence"]
         return context, None, None, None  # Perplexity task only requires the context
