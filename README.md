@@ -20,20 +20,20 @@
 
 #### Basic Evaluation
 ```bash
-python cosmos_eval.py --model path/to/model --task task_name
+python evaluator.py --model path/to/model --task task_name
 ```
 
 #### Few-Shot Learning with GPU
 ```bash
-python cosmos_eval.py --model path/to/model --task task_name --n_shots 5 --device cuda
+python evaluator.py --model path/to/model --task task_name --n_shots 5 --device cuda
 ```
 
 #### Limit Samples and Print Faulty Prompts
 ```bash
-python cosmos_eval.py --model path/to/model --task task_name --limit 100 --print-faulty
+python evaluator.py --model path/to/model --task task_name --limit 100 --print-faulty
 ```
 
 #### Custom Metrics Evaluation
 ```bash
-python cosmos_eval.py --model path/to/model --task task_name --exclude-acc --exclude-perplexity
+python evaluator.py --model path/to/model --task task_name --exclude-acc --exclude-perplexity
 ```
