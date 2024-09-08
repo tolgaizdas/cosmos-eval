@@ -42,10 +42,12 @@ if __name__ == '__main__':
     task = load_task(task_name, n_shots)
 
     metrics = ["acc", "acc_norm", "perplexity"]
-    if args.exclude_acc:
+    if args.exclude_acc or task_name == 'perp':
         metrics.remove("acc")
-    if args.exclude_acc_norm:
+    if args.exclude_acc_norm or task_name == 'perp':
         metrics.remove("acc_norm")
+    if task_name == 'perp' and (args.exclude_acc or args.exclude_acc_norm):
+        print('Perplexity task does not require acc and acc_norm. Excluding them.')
     if args.exclude_perplexity:
         metrics.remove("perplexity")
     
