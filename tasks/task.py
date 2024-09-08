@@ -17,7 +17,7 @@ class Task(ABC):
 
         self.prompt_initial = prompt_initial  # Initial prompt word for the task
 
-    def generate_prompt(self, ctx, include_choices=False):
+    def generate_prompt(self, ctx, idx, include_choices=False):
         prompt = ""
 
         if self.train_ds is None and self.n_shots > 0:
@@ -25,9 +25,12 @@ class Task(ABC):
             self.n_shots = 0
 
         if self.train_ds is not None and self.n_shots > 0:
-            random_data = self.train_ds.shuffle(seed=42).select(range(self.n_shots))  # TODO: Random data should not include the context (ctx)
-            for data in random_data:
-                context, choices, _, gold_text = self.get_attributes(data)
+            # Filter out the context to avoid repetition if the validation and training datasets are the same
+            # Assuming there is no overlap between the validation and training datasets when they are different
+            filtered_ds = self.train_ds.filter(lambda data: data['idx'] != idx)
+            few_shots = filtered_ds.shuffle(seed=42).select(range(self.n_shots))
+            for shot in few_shots:
+                context, choices, _, gold_text = self.get_attributes(shot)
 
                 prompt += f"{self.prompt_initial}: {context}\n"
                 if include_choices:
@@ -50,15 +53,15 @@ class Task(ABC):
         faulty_prompts = [] if faulty else None
         faulty_prompts_norm = [] if faulty else None
 
-        ds = self.limit_dataset(limit)
-        for data in tqdm(ds, desc="Evaluating"):
+        self.train_ds, self.valid_ds = self.process_datasets(limit)
+        for data in tqdm(self.valid_ds, desc="Evaluating"):
             try:
                 context, choices, gold, _ = self.get_attributes(data)
             except Exception:
                 continue
 
             if "acc" in metrics or "acc_norm" in metrics:
-                prompt = self.generate_prompt(context)
+                prompt = self.generate_prompt(context, data['idx'])
                 results, results_norm = get_results(model, tokenizer, prompt, choices, device)
 
                 # Accuracy
@@ -89,16 +92,24 @@ class Task(ABC):
 
         return ret, faulty_prompts, faulty_prompts_norm
 
-    def limit_dataset(self, limit):
-        if limit is None:
-            return self.valid_ds
-
-        if limit > self.valid_ds.num_rows:
+    def process_datasets(self, limit):
+        if limit is not None and limit > self.valid_ds.num_rows:
             print(f"Limit is greater than the number of samples in the dataset. Setting limit to {self.valid_ds.num_rows}.")
             limit = self.valid_ds.num_rows
+        # Limit the number of samples in the validation dataset
+        # No need to limit the training dataset since it is used for generating prompts
+        valid_ds = self.valid_ds.select(range(limit))
 
-        ds = self.valid_ds.select(range(limit))
-        return ds
+        def add_index(d, idx):
+            data = d.copy()
+            data['idx'] = idx
+            return data
+
+        # Add index to the dataset
+        train_ds = self.train_ds.map(lambda data, idx: add_index(data, idx), with_indices=True) if self.train_ds is not None else None
+        valid_ds = valid_ds.map(lambda data, idx: add_index(data, idx), with_indices=True)
+
+        return train_ds, valid_ds
 
     @abstractmethod
     def get_attributes(self, data):
