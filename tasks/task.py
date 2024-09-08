@@ -5,6 +5,8 @@ from tqdm import tqdm
 
 from utils import get_results, perplexity
 
+import logging
+logging.getLogger("datasets").setLevel(logging.WARNING)  # Suppressing Hugging Face datasets INFO and DEBUG messages
 
 class Task(ABC):
     def __init__(self, name, n_shots=0, prompt_initial="Context"):
