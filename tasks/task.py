@@ -25,9 +25,15 @@ class Task(ABC):
             self.n_shots = 0
 
         if self.train_ds is not None and self.n_shots > 0:
-            random_data = self.train_ds.shuffle(seed=42).select(range(self.n_shots))  # TODO: Random data should not include the context (ctx)
-            for data in random_data:
-                context, choices, _, gold_text = self.get_attributes(data)
+            few_shots = self.train_ds.shuffle(seed=42)
+            n = 0  # Number of shots
+            for shot in few_shots:
+                if n == self.n_shots:
+                    break
+
+                context, choices, _, gold_text = self.get_attributes(shot)
+                if context == ctx:
+                    continue
 
                 prompt += f"{self.prompt_initial}: {context}\n"
                 if include_choices:
@@ -35,6 +41,7 @@ class Task(ABC):
                         prompt += f"{chr(j + 65)}. {choices[j]}\n"
 
                 prompt += f"Cevap: {gold_text}\n\n"
+                n += 1
 
         prompt += f"{self.prompt_initial}: {ctx}\n"
         prompt += "Cevap:"
