@@ -8,9 +8,9 @@ from utils import load_task, load_model_and_tokenizer
 def get_parser():
     parser = argparse.ArgumentParser(description='cosmos-eval')
     parser.add_argument('--model', type=str, required=True, help='Path to the model')
-    parser.add_argument('--n_shots', type=int, required=False, default=None, help='Number of shots')
     parser.add_argument('--task', type=str, required=True, help='Task to evaluate')
-    parser.add_argument('--device', type=str, required=False, default='cpu', help='Device to use')
+    parser.add_argument('--n_shots', type=int, required=False, default=None, help='Number of shots')
+    parser.add_argument('--device', type=str, required=False, default='cuda', help='Device to use')
     parser.add_argument('--limit', type=int, required=False, default=None, help='Limit the number of samples')
     parser.add_argument('--print-faulty', action='store_true', help='Print faulty prompts')
     parser.add_argument('--exclude-acc', action='store_true', help='Exclude accuracy')
