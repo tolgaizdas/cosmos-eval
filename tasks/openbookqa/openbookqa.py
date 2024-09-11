@@ -13,7 +13,7 @@ class OpenBookQA(Task):
     def get_datasets(self):
         openbookqa_ds = load_dataset("allenai/openbookqa")
         openbookqa_train = openbookqa_ds["train"]
-        openbookqa_valid = openbookqa_ds["test"]
+        openbookqa_valid = openbookqa_ds["validation"]
 
         return openbookqa_train, openbookqa_valid
 
