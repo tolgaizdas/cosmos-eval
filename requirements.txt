@@ -1,6 +1,6 @@
-datasets
-tqdm
+datasets~=2.20.0
+tqdm~=4.66.4
 numpy
-torch
-transformers
-pandas
+torch~=2.4.0
+transformers~=4.43.3
+pandas~=2.2.2
