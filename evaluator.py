@@ -2,7 +2,7 @@ import argparse
 
 import torch
 
-from utils import load_task, load_model_and_tokenizer
+from utils.base_utils import load_task, load_model_and_tokenizer
 
 
 def get_parser():
