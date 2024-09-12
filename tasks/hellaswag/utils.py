@@ -15,6 +15,7 @@ def preprocess(text):
 
 def process_doc(doc):
     ctx = doc["ctx_a"] + " " + doc["ctx_b"].capitalize()
-    out_doc = {"ctx": preprocess(ctx), "endings": [preprocess(ending) for ending in doc["endings"]],
+    out_doc = {"ctx": preprocess(ctx),
+               "endings": [preprocess(ending) for ending in doc["endings"]],
                "label": int(doc["label"]), }
     return out_doc

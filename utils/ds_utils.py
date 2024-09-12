@@ -17,4 +17,4 @@ def translate(text, source="auto", target="tr"):
             translated = " ".join(translated_batches)
         return translated
     except Exception:
-        return ""
+        return ""  # TODO: Returning an empty string causes errors on the encoding step.
