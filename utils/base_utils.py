@@ -26,6 +26,9 @@ def load_task(task_name, n_shots):
     elif task_name == 'openbookqa':
         from tasks.openbookqa.openbookqa import OpenBookQA
         task = OpenBookQA(n_shots) if n_shots is not None else OpenBookQA()
+    elif task_name == 'xstorycloze':
+        from tasks.xstorycloze.xstorycloze import XStoryCloze
+        task = XStoryCloze(n_shots) if n_shots is not None else XStoryCloze()
     else:
         raise ValueError(f'Unknown task: {task_name}')
 
