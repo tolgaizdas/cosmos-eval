@@ -51,7 +51,9 @@ def get_results(model, tokenizer, prompt, choices, device):
         for i in range(choice_len):
             attention_mask[:, choice_start_idx:choice_start_idx + i + 1] = 1
             log_probs = get_log_probs(model, all_ids, attention_mask)
-            unnormalized += log_probs[choice_ids[0, i]].item()  # Un-normalized (https://blog.eleuther.ai/multiple-choice-normalization/)
+            c_id = choice_ids[0, i]
+            unnormalized += log_probs[c_id].item()  # Un-normalized (https://blog.eleuther.ai/multiple-choice-normalization/)
+            byte_length += get_byte_length(tokenizer, c_id)
 
         attention_mask[:, choice_start_idx:choice_end_idx] = 0
         choice_start_idx = choice_end_idx
