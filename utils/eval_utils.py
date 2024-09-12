@@ -18,37 +18,73 @@ def get_byte_length(tokenizer, token_id):
     return byte_length
 
 
-def get_log_probs(model, input_ids):
+def get_log_probs(model, input_ids, attention_mask):
     with torch.no_grad():
-        outputs = model(input_ids, labels=input_ids)
+        outputs = model(input_ids, attention_mask=attention_mask)
         logits = outputs.logits
     logits = logits[0, -1, :]  # Get the logits of the last token
     probs = torch.nn.functional.softmax(logits, dim=-1)
     log_probs = torch.log(probs)
     return log_probs
 
+def get_results(tokenizer, prompt, choices, device):
+    prompt = prompt.strip() + " "  # Add space to separate prompt from choices
+    prompt_ids = tokenizer.encode(prompt, return_tensors="pt").to(device)
+    choice_ids_list = [tokenizer.encode(choice, return_tensors="pt").to(device) for choice in choices]
+
+    all_ids = torch.cat([prompt_ids] + choice_ids_list, dim=1)
+
+    prompt_len = prompt_ids.shape[1]
+
+    attention_mask = torch.zeros(all_ids.shape, dtype=torch.long, device=device)
+    attention_mask[:, :prompt_len] = 1
+
+    choice_start_idx = prompt_len
+
+    for choice_ids in choice_ids_list:
+        choice_len = choice_ids.shape[1]
+        choice_end_idx = choice_start_idx + choice_len
+        for i in range(choice_len):
+            attention_mask[:, choice_start_idx:choice_start_idx + i + 1] = 1
+            visible_ids = all_ids * attention_mask
+            decoded_text = tokenizer.decode(visible_ids[0, :], skip_special_tokens=True)
+            print(decoded_text)
+        attention_mask[:, choice_start_idx:choice_end_idx] = 0
+        choice_start_idx = choice_end_idx
+
 
 def get_results(model, tokenizer, prompt, choices, device):
+    prompt = prompt.strip() + " "  # Add space to separate prompt from choices
     prompt_ids = tokenizer.encode(prompt, return_tensors="pt").to(device)
+    prompt_len = prompt_ids.shape[1]
+
+    choice_ids_list = [tokenizer.encode(choice, return_tensors="pt").to(device) for choice in choices]
+    all_ids = torch.cat([prompt_ids] + choice_ids_list, dim=1)
+
+    attention_mask = torch.zeros(all_ids.shape, dtype=torch.long, device=device)
+    attention_mask[:, :prompt_len] = 1
+
+    choice_start_idx = prompt_len
+
     results, results_norm = [], []
-    for choice in choices:
+    for choice_ids in choice_ids_list:
         unnormalized, normalized = 0.0, 0.0
         byte_length = 0
-        current_prompt_ids = prompt_ids.clone()
-        if current_prompt_ids.shape[1] > tokenizer.model_max_length:
-            current_prompt_ids = current_prompt_ids[:,
-                                 -tokenizer.model_max_length:]  # Truncate the prompt at the beginning (to keep the most recent context)
-        choice_ids = tokenizer.encode(choice, add_special_tokens=False)
 
-        for c_id in choice_ids:
-            log_probs = get_log_probs(model, current_prompt_ids)
-            unnormalized += log_probs[c_id].item()  # Unnormalized (https://blog.eleuther.ai/multiple-choice-normalization/)
-            current_prompt_ids = torch.cat([current_prompt_ids, torch.tensor([c_id], device=device).unsqueeze(0)], dim=1)
-            byte_length += get_byte_length(tokenizer, c_id)
+        choice_len = choice_ids.shape[1]
+        choice_end_idx = choice_start_idx + choice_len
+        for i in range(choice_len):
+            attention_mask[:, choice_start_idx:choice_start_idx + i + 1] = 1
+            log_probs = get_log_probs(model, all_ids, attention_mask)
+            unnormalized += log_probs[choice_ids[0, i]].item()  # Un-normalized (https://blog.eleuther.ai/multiple-choice-normalization/)
+
+        attention_mask[:, choice_start_idx:choice_end_idx] = 0
+        choice_start_idx = choice_end_idx
 
         normalized += unnormalized / byte_length if byte_length > 0 else 0.0  # Byte-length normalized (https://blog.eleuther.ai/multiple-choice-normalization/)
         results.append(unnormalized)
         results_norm.append(normalized)
+
     return results, results_norm
 
 
