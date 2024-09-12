@@ -27,31 +27,6 @@ def get_log_probs(model, input_ids, attention_mask):
     log_probs = torch.log(probs)
     return log_probs
 
-def get_results(tokenizer, prompt, choices, device):
-    prompt = prompt.strip() + " "  # Add space to separate prompt from choices
-    prompt_ids = tokenizer.encode(prompt, return_tensors="pt").to(device)
-    choice_ids_list = [tokenizer.encode(choice, return_tensors="pt").to(device) for choice in choices]
-
-    all_ids = torch.cat([prompt_ids] + choice_ids_list, dim=1)
-
-    prompt_len = prompt_ids.shape[1]
-
-    attention_mask = torch.zeros(all_ids.shape, dtype=torch.long, device=device)
-    attention_mask[:, :prompt_len] = 1
-
-    choice_start_idx = prompt_len
-
-    for choice_ids in choice_ids_list:
-        choice_len = choice_ids.shape[1]
-        choice_end_idx = choice_start_idx + choice_len
-        for i in range(choice_len):
-            attention_mask[:, choice_start_idx:choice_start_idx + i + 1] = 1
-            visible_ids = all_ids * attention_mask
-            decoded_text = tokenizer.decode(visible_ids[0, :], skip_special_tokens=True)
-            print(decoded_text)
-        attention_mask[:, choice_start_idx:choice_end_idx] = 0
-        choice_start_idx = choice_end_idx
-
 
 def get_results(model, tokenizer, prompt, choices, device):
     prompt = prompt.strip() + " "  # Add space to separate prompt from choices
