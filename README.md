@@ -9,7 +9,7 @@
 | `--model`             | Path to the pre-trained model                       | Yes      | N/A       |
 | `--task`              | Task name for model evaluation                      | Yes      | N/A       |
 | `--n_shots`           | Number of shots for few-shot learning               | No       | `None`    |
-| `--device`            | Device to run the evaluation (`cpu` or `cuda`)      | No       | `cuda`     |
+| `--device`            | Device to run the evaluation (`cpu` or `cuda`)      | No       | `cuda`    |
 | `--limit`             | Limit the number of samples to evaluate             | No       | `None`    |
 | `--print-faulty`      | Print faulty prompts                                | No       | `False`   |
 | `--exclude-acc`       | Exclude accuracy from the evaluation metrics        | No       | `False`   |
