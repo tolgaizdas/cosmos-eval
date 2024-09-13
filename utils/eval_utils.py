@@ -20,7 +20,7 @@ def get_byte_length(tokenizer, token_id):
 
 def get_log_probs(model, input_ids):
     with torch.no_grad():
-        outputs = model(input_ids, labels=input_ids)
+        outputs = model(input_ids, labels=input_ids)  # TODO: Fails on long sequences
         logits = outputs.logits
     logits = logits[0, -1, :]  # Get the logits of the last token
     probs = torch.nn.functional.softmax(logits, dim=-1)
@@ -36,8 +36,7 @@ def get_results(model, tokenizer, prompt, choices, device):
         byte_length = 0
         current_prompt_ids = prompt_ids.clone()
         if current_prompt_ids.shape[1] > tokenizer.model_max_length:
-            current_prompt_ids = current_prompt_ids[:,
-                                 -tokenizer.model_max_length:]  # Truncate the prompt at the beginning (to keep the most recent context)
+            current_prompt_ids = current_prompt_ids[:, -tokenizer.model_max_length:]  # Truncate the prompt at the beginning (to keep the most recent context)
         choice_ids = tokenizer.encode(choice, add_special_tokens=False)
 
         for c_id in choice_ids:
