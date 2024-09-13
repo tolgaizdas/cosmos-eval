@@ -39,13 +39,13 @@ class Task(ABC):
                 prompt += (f"{self.prompt_intro}: " if self.prompt_intro else '') + context + "\n"
                 if include_choices:
                     for j in range(len(choices)):
-                        prompt += f"{chr(j + 65)}." + choices[j] + "\n"
+                        prompt += f"{chr(j + 65)}. " + choices[j] + "\n"
 
-                prompt += (f"{self.prompt_conclusion}:" if self.prompt_conclusion else '') + gold_text + "\n\n"
+                prompt += (f"{self.prompt_conclusion}: " if self.prompt_conclusion else '') + gold_text + "\n\n"
                 n += 1
 
-        prompt += (f"{self.prompt_intro}:" if self.prompt_intro else '') + ctx + "\n"
-        prompt += f"{self.prompt_conclusion}:" if self.prompt_conclusion else ''
+        prompt += (f"{self.prompt_intro}: " if self.prompt_intro else '') + ctx + "\n"
+        prompt += f"{self.prompt_conclusion}: " if self.prompt_conclusion else ''
         return prompt
 
     def eval_task(self, model, tokenizer, device, metrics, limit, faulty):
