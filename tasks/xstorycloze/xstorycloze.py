@@ -9,7 +9,7 @@ class XStoryCloze(Task):
     def __init__(self, n_shots=0):  # TODO: Check for default n_shots
         super().__init__('xstorycloze', n_shots=n_shots)
         self.train_ds, self.valid_ds = self.get_datasets()
-        self.prompt_initial = "Hikaye"
+        self.prompt_intro = "Hikaye"
 
     def get_datasets(self):
         xstorycloze_ds = load_dataset("juletxara/xstory_cloze", "en")
