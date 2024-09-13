@@ -4,3 +4,4 @@ numpy
 torch~=2.4.0
 transformers~=4.43.3
 pandas~=2.2.2
+deep-translator~=1.11.4

@@ -1,9 +1,9 @@
+import math
 from abc import ABC, abstractmethod
 
-import math
 from tqdm import tqdm
 
-from utils import get_results, perplexity
+from utils.eval_utils import get_results, perplexity
 
 
 class Task(ABC):

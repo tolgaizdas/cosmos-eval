@@ -46,21 +46,25 @@ Here are the tasks and the corresponding datasets used for evaluation. Some data
 ### Example Usage
 
 #### Basic Evaluation
+
 ```bash
 python evaluator.py --model path/to/model --task task_name
 ```
 
 #### Few-Shot Learning with GPU
+
 ```bash
 python evaluator.py --model path/to/model --task task_name --n_shots 5 --device cuda
 ```
 
 #### Limit Samples and Print Faulty Prompts
+
 ```bash
 python evaluator.py --model path/to/model --task task_name --limit 100 --print-faulty
 ```
 
 #### Custom Metrics Evaluation
+
 ```bash
 python evaluator.py --model path/to/model --task task_name --exclude-acc --exclude-perplexity
 ```
