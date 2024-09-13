@@ -18,8 +18,8 @@ class Hellaswag(Task):
         hellaswag_valid = hellaswag_valid_v02  # 8k
         # hellaswag_valid = concatenate_datasets([hellaswag_valid_v02, hellaswag["validation"]])  # 18k
 
-        hellaswag_train = hellaswag_train.map(process_doc)
-        hellaswag_valid = hellaswag_valid.map(process_doc)
+        hellaswag_train = hellaswag_train.map(process_doc, load_from_cache_file=False)
+        hellaswag_valid = hellaswag_valid.map(process_doc, load_from_cache_file=False)
 
         return hellaswag_train, hellaswag_valid
 
