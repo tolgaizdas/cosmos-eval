@@ -58,6 +58,9 @@ def load_task(task_name, n_shots):
     elif task_name == 'xstorycloze':
         from tasks.xstorycloze.xstorycloze import XStoryCloze
         task = XStoryCloze(n_shots) if n_shots is not None else XStoryCloze()
+    elif task_name == 'race':
+        from tasks.race.race import Race
+        task = Race(n_shots) if n_shots is not None else Race()
     else:
         raise ValueError(f'Unknown task: {task_name}')
 

@@ -7,7 +7,7 @@ from utils.eval_utils import get_results, perplexity
 
 
 class Task(ABC):
-    def __init__(self, name, n_shots=0, prompt_initial="Context"):
+    def __init__(self, name, n_shots=0, prompt_intro="İçerik", prompt_conclusion="Cevap"):
         self.name = name
 
         self.train_ds = None  # Training dataset
@@ -15,7 +15,8 @@ class Task(ABC):
 
         self.n_shots = n_shots  # Number of shots
 
-        self.prompt_initial = prompt_initial  # Initial prompt word for the task
+        self.prompt_intro = prompt_intro  # Start prompt word for the task
+        self.prompt_conclusion = prompt_conclusion  # End prompt word for the task
 
     def generate_prompt(self, ctx, include_choices=False):
         prompt = ""
@@ -35,16 +36,16 @@ class Task(ABC):
                 if context == ctx:
                     continue
 
-                prompt += f"{self.prompt_initial}: {context}\n"
+                prompt += (f"{self.prompt_intro}: " if self.prompt_intro else '') + context + "\n"
                 if include_choices:
                     for j in range(len(choices)):
-                        prompt += f"{chr(j + 65)}. {choices[j]}\n"
+                        prompt += f"{chr(j + 65)}. " + choices[j] + "\n"
 
-                prompt += f"Cevap: {gold_text}\n\n"
+                prompt += (f"{self.prompt_conclusion}: " if self.prompt_conclusion else '') + gold_text + "\n\n"
                 n += 1
 
-        prompt += f"{self.prompt_initial}: {ctx}\n"
-        prompt += "Cevap:"
+        prompt += (f"{self.prompt_intro}: " if self.prompt_intro else '') + ctx + "\n"
+        prompt += f"{self.prompt_conclusion}: " if self.prompt_conclusion else ''
         return prompt
 
     def eval_task(self, model, tokenizer, device, metrics, limit, faulty):
