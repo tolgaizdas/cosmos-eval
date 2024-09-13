@@ -16,8 +16,8 @@ class XStoryCloze(Task):
         xstorycloze_train = xstorycloze_ds["train"]
         xstorycloze_valid = xstorycloze_ds["eval"]
 
-        xstorycloze_train = xstorycloze_train.map(process_doc)
-        xstorycloze_valid = xstorycloze_valid.map(process_doc)
+        xstorycloze_train = xstorycloze_train.map(process_doc, load_from_cache_file=False)
+        xstorycloze_valid = xstorycloze_valid.map(process_doc, load_from_cache_file=False)
 
         return xstorycloze_train, xstorycloze_valid
 
