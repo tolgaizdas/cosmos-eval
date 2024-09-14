@@ -10,7 +10,7 @@ class Perp(Task):
         self.train_ds, self.valid_ds = self.get_datasets()
 
     def get_datasets(self, ds_name="medium_long_tr.csv"):
-        df = pd.read_csv(f"tasks/perp/dataset/{ds_name}")
+        df = pd.read_csv(f"tasks/perp/ds/{ds_name}")
         ds = Dataset.from_pandas(df)
         return None, ds
 
