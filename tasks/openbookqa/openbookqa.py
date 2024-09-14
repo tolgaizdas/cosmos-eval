@@ -1,7 +1,6 @@
-from datasets import load_dataset
+from datasets import load_from_disk
 
 from tasks.task import Task
-from utils.ds_utils import translate
 
 
 class OpenBookQA(Task):
@@ -11,21 +10,15 @@ class OpenBookQA(Task):
         self.prompt_intro = "Soru"
 
     def get_datasets(self):
-        openbookqa_ds = load_dataset("allenai/openbookqa")
-        openbookqa_train = openbookqa_ds["train"]
-        openbookqa_valid = openbookqa_ds["validation"]
+        openbookqa_train = load_from_disk("tasks/openbookqa/ds/openbookqa_train_tr")
+        openbookqa_valid = load_from_disk("tasks/openbookqa/ds/openbookqa_valid_tr")
 
         return openbookqa_train, openbookqa_valid
 
     def get_attributes(self, data):
-        question = data["question_stem"]
-        choices = data["choices"]["text"]
+        question = data["question_stem_tr"]
+        choices = data["choices_tr"]
         gold = ord(data["answerKey"]) - 65  # A: 0, B: 1, C: 2, D: 3
-        gold_text = choices[gold]
-
-        # TODO: Use translated dataset instead of translating each time
-        question = translate(question)
-        choices = [translate(choice) for choice in choices]
-        gold_text = translate(gold_text)
+        gold_text = data["gold_text_tr"]
 
         return question, choices, gold, gold_text
