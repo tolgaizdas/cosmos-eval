@@ -39,7 +39,7 @@ Here are the tasks and the corresponding datasets used for evaluation. Some data
 - **ARC**: [ARC Dataset](https://huggingface.co/datasets/malhajar/arc-tr-v0.2) (Already translated to Turkish)
 - **HellaSwag**: [HellaSwag Dataset](https://huggingface.co/datasets/malhajar/hellaswag_tr-v0.2) (Already translated to Turkish)
 - **OpenBookQA**: [OpenBookQA Dataset](https://huggingface.co/datasets/allenai/openbookqa) (Used after translation)
-- **Perplexity (Perp)**: [Medium TR Dataset](tasks/perp/ds/medium_tr.csv) (Already translated to Turkish)
+- **Perplexity (Perp)**: [Medium Long TR Dataset](tasks/perp/ds/medium_long_tr.csv) (Already translated to Turkish)
 - **Race**: [Race Dataset](https://huggingface.co/datasets/ehovy/race) (Used after translation)
 - **TEOG**: [TEOG 2013 Dataset](https://huggingface.co/datasets/aliardaf/LLMs-Turkish-TEOG-Leaderboard/resolve/main/teog_2013_text.csv) (Turkish dataset)
 - **XStoryCloze**: [XStoryCloze Dataset](https://huggingface.co/datasets/juletxara/xstory_cloze) (Used after translation)
