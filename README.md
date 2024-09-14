@@ -1,6 +1,6 @@
-# Cosmos-Eval
+# cosmos-eval
 
-Cosmos-Eval is a tool designed for evaluating machine learning models on a variety of tasks. It supports few-shot learning, custom metric evaluation, and provides options for running on different devices.
+cosmos-eval is a tool designed for evaluating machine learning models on a variety of tasks. It supports few-shot learning, custom metric evaluation, and provides options for running on different devices.
 
 ## Setup
 
