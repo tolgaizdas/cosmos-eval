@@ -22,7 +22,7 @@ def get_log_probs(model, input_ids):
     max_length = model.config.n_positions
     if input_ids.shape[1] <= max_length:
         with torch.no_grad():
-            outputs = model(input_ids, labels=input_ids)
+            outputs = model(input_ids)
             logits = outputs.logits
     else:
         chunk_size = max_length - 10  # Room for padding (is it necessary?)
@@ -30,7 +30,7 @@ def get_log_probs(model, input_ids):
         logits_list = []
         for chunk in chunks:
             with torch.no_grad():
-                outputs = model(chunk, labels=chunk)
+                outputs = model(chunk)
                 logits_list.append(outputs.logits)
         logits = torch.cat(logits_list, dim=1)
 
