@@ -19,6 +19,6 @@ class OpenBookQA(Task):
         question = data["question_stem_tr"]
         choices = data["choices_tr"]
         gold = ord(data["answerKey"]) - 65  # A: 0, B: 1, C: 2, D: 3
-        gold_text = data["choices_tr"][gold]
+        gold_text = choices[gold]
 
         return question, choices, gold, gold_text
