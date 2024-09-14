@@ -56,10 +56,6 @@
         "_type": "Value"
       },
       "_type": "Sequence"
-    },
-    "gold_text_tr": {
-      "dtype": "string",
-      "_type": "Value"
     }
   },
   "homepage": "",
