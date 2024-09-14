@@ -30,7 +30,7 @@ def get_log_probs(model, input_ids):
         logits_list = []
         for chunk in chunks:
             with torch.no_grad():
-                outputs = model(chunk)
+                outputs = model(chunk, labels=chunk)
                 logits_list.append(outputs.logits)
         logits = torch.cat(logits_list, dim=1)
 
