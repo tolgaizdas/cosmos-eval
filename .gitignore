@@ -1,7 +1,8 @@
-**/__pycache__
-**/venv
-**/.idea
-**/todo.txt
-**/results.csv
+**/__pycache__/
+**/venv/
+**/.idea/
+**/todo.txt/
+**/results/
 **/test.py
 **/run.py
+**/todo.txt
