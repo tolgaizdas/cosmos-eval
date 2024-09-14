@@ -20,15 +20,20 @@ def get_byte_length(tokenizer, token_id):
 
 def get_log_probs(model, input_ids):
     max_length = model.config.n_positions
-    chunk_size = max_length - 10  # Room for padding
-    chunks = input_ids.split(chunk_size, dim=1)
-    logits_list = []
-    for chunk in chunks:
+    if input_ids.shape[1] <= max_length:
         with torch.no_grad():
-            outputs = model(chunk)
+            outputs = model(input_ids, labels=input_ids)
             logits = outputs.logits
-            logits_list.append(logits)
-    logits = torch.cat(logits_list, dim=1)
+    else:
+        chunk_size = max_length - 10  # Room for padding (is it necessary?)
+        chunks = input_ids.split(chunk_size, dim=1)
+        logits_list = []
+        for chunk in chunks:
+            with torch.no_grad():
+                outputs = model(chunk)
+                logits_list.append(outputs.logits)
+        logits = torch.cat(logits_list, dim=1)
+
     last_token_logits = logits[0, -1, :]  # Get the logits of the last token
     probs = torch.nn.functional.softmax(last_token_logits, dim=-1)
     log_probs = torch.log(probs)
