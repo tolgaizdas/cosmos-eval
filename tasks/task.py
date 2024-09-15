@@ -11,8 +11,7 @@ class Task(ABC):
     def __init__(self, name, n_shots=0, prompt_intro="İçerik", prompt_conclusion="Cevap"):
         self.name = name
 
-        self.train_ds = None  # Training dataset
-        self.valid_ds = None  # Validation dataset
+        self.train_ds, self.valid_ds = self.get_datasets()
 
         self.n_shots = n_shots  # Number of shots
 
