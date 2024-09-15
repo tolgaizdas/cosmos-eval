@@ -20,7 +20,7 @@ class XStoryCloze(Task):
     def get_attributes(self, data):
         story = data["story_tr"]
         endings = data["endings_tr"]
-        gold = data["answer"]  # 1, 2
-        gold_text = endings[gold - 1]  # -1 to convert (1, 2) to (0, 1)
+        gold = int(data["answer"]) - 1  # 0, 1
+        gold_text = endings[gold]
 
         return story, endings, gold, gold_text
