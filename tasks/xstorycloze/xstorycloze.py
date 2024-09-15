@@ -1,8 +1,7 @@
-from datasets import load_dataset
+from datasets import load_from_disk
 
 from tasks.task import Task
 from tasks.xstorycloze.utils import process_doc
-from utils.ds_utils import translate
 
 
 class XStoryCloze(Task):
@@ -10,9 +9,8 @@ class XStoryCloze(Task):
         super().__init__('xstorycloze', n_shots=n_shots, prompt_intro="Hikaye")
 
     def get_datasets(self):
-        xstorycloze_ds = load_dataset("juletxara/xstory_cloze", "en")
-        xstorycloze_train = xstorycloze_ds["train"]
-        xstorycloze_valid = xstorycloze_ds["eval"]
+        xstorycloze_train = load_from_disk("tasks/xstorycloze/ds/xstorycloze_train_tr")
+        xstorycloze_valid = load_from_disk("tasks/xstorycloze/ds/xstorycloze_valid_tr")
 
         xstorycloze_train = xstorycloze_train.map(process_doc, load_from_cache_file=False)
         xstorycloze_valid = xstorycloze_valid.map(process_doc, load_from_cache_file=False)
@@ -20,14 +18,9 @@ class XStoryCloze(Task):
         return xstorycloze_train, xstorycloze_valid
 
     def get_attributes(self, data):
-        story = data["story"]
-        endings = data["endings"]
+        story = data["story_tr"]
+        endings = data["endings_tr"]
         gold = data["answer"]  # 1, 2
         gold_text = endings[gold - 1]  # -1 to convert (1, 2) to (0, 1)
-
-        # TODO: Use translated dataset instead of translating each time
-        story = translate(story)
-        endings = [translate(ending) for ending in endings]
-        gold_text = translate(gold_text)
 
         return story, endings, gold, gold_text

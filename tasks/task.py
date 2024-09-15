@@ -18,7 +18,7 @@ class Task(ABC):
         self.prompt_intro = prompt_intro  # Start prompt word for the task
         self.prompt_conclusion = prompt_conclusion  # End prompt word for the task
 
-    def generate_prompt(self, ctx, include_choices=False):
+    def generate_prompt(self, ctx, ctx_choices, include_choices=False):
         prompt = ""
 
         if self.train_ds is None and self.n_shots > 0:
@@ -45,6 +45,9 @@ class Task(ABC):
                 n += 1
 
         prompt += (f"{self.prompt_intro}: " if self.prompt_intro else '') + ctx + "\n"
+        if include_choices:
+            for j in range(len(ctx_choices)):
+                prompt += f"{chr(j + 65)}. " + ctx_choices[j] + "\n"
         prompt += f"{self.prompt_conclusion}: " if self.prompt_conclusion else ''
         return prompt
 
@@ -66,7 +69,7 @@ class Task(ABC):
                 continue
 
             if "acc" in metrics or "acc_norm" in metrics:
-                prompt = self.generate_prompt(context)
+                prompt = self.generate_prompt(context, choices)
                 results, results_norm = get_results(model, tokenizer, prompt, choices, device)
 
                 # Accuracy
