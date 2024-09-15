@@ -19,10 +19,16 @@ Here are the tasks and the corresponding datasets used for evaluation. Some data
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-repo/cosmos-eval.git && cd cosmos-eval
+git clone https://github.com/tolgaizdas/cosmos-eval.git
 ```
 
-### 2. Install Dependencies
+### 2. Navigate to the Directory
+
+```bash
+cd cosmos-eval
+```
+
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
