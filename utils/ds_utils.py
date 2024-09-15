@@ -18,3 +18,14 @@ def translate(text, source="auto", target="tr"):
         return translated
     except Exception:
         return ""  # TODO: Returning an empty string causes errors on the encoding step.
+
+
+def limit_dataset(ds, limit):
+    if limit is None:
+        return ds
+
+    if limit > ds.num_rows:
+        print(f"Limit is greater than the number of samples in the dataset. Setting limit to {ds.num_rows}.")
+        limit = ds.num_rows
+
+    return ds.select(range(limit))
