@@ -4,7 +4,7 @@ cosmos-eval is a tool designed for evaluating machine learning models on a varie
 
 ## Available Tasks and Datasets
 
-Here are the tasks and the corresponding datasets used for evaluation. Some datasets are in Turkish, while others are English datasets used after translation:
+Here are the tasks and the corresponding datasets used for evaluation. Some datasets are in Turkish, while others are English datasets used after translation.
 
 - **ARC**: [ARC Dataset](https://huggingface.co/datasets/malhajar/arc-tr-v0.2) (Already translated to Turkish)
 - **HellaSwag**: [HellaSwag Dataset](https://huggingface.co/datasets/malhajar/hellaswag_tr-v0.2) (Already translated to Turkish)
@@ -36,18 +36,18 @@ python -m venv venv
 
 ### 4. Activate the Virtual Environment
 
-* **On Windows:**
+- **On Windows:**
 
 ```bash
 venv\Scripts\activate
 ```
 
-* **On macOS and Linux:**
+- **On macOS and Linux:**
 
 ```bash
 source venv/bin/activate
 ```
-  
+
 ### 5. Install Dependencies
 
 ```bash
@@ -58,17 +58,18 @@ pip install -r requirements.txt
 
 ### Command-line Arguments
 
-| Argument               | Description                                     | Required |    Default     |
-|------------------------|-------------------------------------------------|:--------:|:--------------:|
-| `--model`              | Path to the pre-trained model                   |   Yes    |      N/A       |
-| `--task`               | Task name for model evaluation                  |   Yes    |      N/A       |
-| `--n_shots`            | Number of shots for few-shot learning           |    No    | `task default` |
-| `--device`             | Device to run the evaluation (`cpu` or `cuda`)  |    No    |     `cuda`     |
-| `--limit`              | Limit the number of samples to evaluate         |    No    |     `None`     |
-| `--print-faulty`       | Print faulty prompts                            |    No    |    `False`     |
-| `--exclude-acc`        | Exclude accuracy from the evaluation metrics    |    No    |    `False`     |
-| `--exclude-acc-norm`   | Exclude normalized accuracy from the evaluation |    No    |    `False`     |
-| `--exclude-perplexity` | Exclude perplexity from the evaluation metrics  |    No    |    `False`     |
+| Argument                      | Description                                    | Required |    Default     |
+|-------------------------------|------------------------------------------------|:--------:|:--------------:|
+| `--model`                     | Path to the pre-trained model                  |   Yes    |      N/A       |
+| `--task`                      | Task name for model evaluation                 |   Yes    |      N/A       |
+| `--n_shots`                   | Number of shots for few-shot learning          |    No    | `task default` |
+| `--device`                    | Device to run the evaluation (`cpu` or `cuda`) |    No    |     `cuda`     |
+| `--limit`                     | Limit the number of samples to evaluate        |    No    |     `None`     |
+| `--print-faulty`              | Print faulty prompts                           |    No    |    `False`     |
+| `--include-choices-in-prompt` | Include choices in prompt                      |    No    |    `False`     |
+| `--exclude-acc`               | Exclude accuracy from the metrics              |    No    |    `False`     |
+| `--exclude-acc-norm`          | Exclude normalized accuracy from the metrics   |    No    |    `False`     |
+| `--exclude-perplexity`        | Exclude perplexity from the metrics            |    No    |    `False`     |
 
 ### Example Usage
 
