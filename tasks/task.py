@@ -1,4 +1,5 @@
 import math
+import random
 from abc import ABC, abstractmethod
 
 from tqdm import tqdm
@@ -26,7 +27,8 @@ class Task(ABC):
             self.n_shots = 0
 
         if self.train_ds is not None and self.n_shots > 0:
-            few_shots = self.train_ds.shuffle(seed=42)
+            seed = random.randint(0, 1000)
+            few_shots = self.train_ds.shuffle(seed=seed)
             n = 0  # Number of shots
             for shot in few_shots:
                 if n == self.n_shots:
