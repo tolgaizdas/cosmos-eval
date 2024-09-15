@@ -51,7 +51,7 @@ class Task(ABC):
         prompt += f"{self.prompt_conclusion}: " if self.prompt_conclusion else ''
         return prompt
 
-    def eval_task(self, model, tokenizer, device, metrics, limit, faulty):
+    def eval_task(self, model, tokenizer, device, metrics, limit=None, faulty=False, include_choices=False):
         model.to(device)
         model.eval()
 
@@ -69,7 +69,7 @@ class Task(ABC):
                 continue
 
             if "acc" in metrics or "acc_norm" in metrics:
-                prompt = self.generate_prompt(context, choices)
+                prompt = self.generate_prompt(context, choices, include_choices)
                 results, results_norm = get_results(model, tokenizer, prompt, choices, device)
 
                 # Accuracy

@@ -11,6 +11,7 @@ def get_parser():
     parser.add_argument('--device', type=str, required=False, default='cuda', help='Device to use')
     parser.add_argument('--limit', type=int, required=False, default=None, help='Limit the number of samples')
     parser.add_argument('--print-faulty', action='store_true', help='Print faulty prompts')
+    parser.add_argument('--include-choices-in-prompt', action='store_true', help='Include choices in prompt')
     parser.add_argument('--exclude-acc', action='store_true', help='Exclude accuracy')
     parser.add_argument('--exclude-acc-norm', action='store_true', help='Exclude normalized accuracy')
     parser.add_argument('--exclude-perplexity', action='store_true', help='Exclude perplexity')
