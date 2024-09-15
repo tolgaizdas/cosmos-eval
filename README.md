@@ -28,7 +28,27 @@ git clone https://github.com/tolgaizdas/cosmos-eval.git
 cd cosmos-eval
 ```
 
-### 3. Install Dependencies
+### 3. Create a Virtual Environment
+
+```bash
+python -m venv venv
+```
+
+### 4. Activate the Virtual Environment
+
+* **On Windows:**
+
+```bash
+venv\Scripts\activate
+```
+
+* **On macOS and Linux:**
+
+```bash
+source venv/bin/activate
+```
+  
+### 5. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
