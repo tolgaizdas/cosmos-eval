@@ -1,0 +1,100 @@
+{
+  "builder_name": "parquet",
+  "citation": "@article{DBLP:journals/corr/abs-2112-10668,\n  author    = {Xi Victoria Lin and\n               Todor Mihaylov and\n               Mikel Artetxe and\n               Tianlu Wang and\n               Shuohui Chen and\n               Daniel Simig and\n               Myle Ott and\n               Naman Goyal and\n               Shruti Bhosale and\n               Jingfei Du and\n               Ramakanth Pasunuru and\n               Sam Shleifer and\n               Punit Singh Koura and\n               Vishrav Chaudhary and\n               Brian O'Horo and\n               Jeff Wang and\n               Luke Zettlemoyer and\n               Zornitsa Kozareva and\n               Mona T. Diab and\n               Veselin Stoyanov and\n               Xian Li},\n  title     = {Few-shot Learning with Multilingual Language Models},\n  journal   = {CoRR},\n  volume    = {abs/2112.10668},\n  year      = {2021},\n  url       = {https://arxiv.org/abs/2112.10668},\n  eprinttype = {arXiv},\n  eprint    = {2112.10668},\n  timestamp = {Tue, 04 Jan 2022 15:59:27 +0100},\n  biburl    = {https://dblp.org/rec/journals/corr/abs-2112-10668.bib},\n  bibsource = {dblp computer science bibliography, https://dblp.org}\n}\n",
+  "config_name": "en",
+  "dataset_name": "xstory_cloze",
+  "dataset_size": 614290,
+  "description": "\nXStoryCloze consists of the professionally translated version of the [English StoryCloze dataset](https://cs.rochester.edu/nlp/rocstories/) (Spring 2016 version) to 10 non-English languages. This dataset is released by Meta AI.\n",
+  "download_checksums": {
+    "hf://datasets/juletxara/xstory_cloze@a64fafbdfabd67709e8ce65d13a2638e972ef157/en/train/0000.parquet": {
+      "num_bytes": 92324,
+      "checksum": null
+    },
+    "hf://datasets/juletxara/xstory_cloze@a64fafbdfabd67709e8ce65d13a2638e972ef157/en/eval/0000.parquet": {
+      "num_bytes": 356681,
+      "checksum": null
+    }
+  },
+  "download_size": 449005,
+  "features": {
+    "story_id": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "input_sentence_1": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "input_sentence_2": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "input_sentence_3": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "input_sentence_4": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "sentence_quiz1": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "sentence_quiz2": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "answer_right_ending": {
+      "dtype": "int32",
+      "_type": "Value"
+    },
+    "input_sentence_1_tr": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "input_sentence_2_tr": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "input_sentence_3_tr": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "input_sentence_4_tr": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "sentence_quiz1_tr": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "sentence_quiz2_tr": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "https://cs.rochester.edu/nlp/rocstories/",
+  "license": "",
+  "size_in_bytes": 1063295,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 118529,
+      "num_examples": 360,
+      "dataset_name": "xstory_cloze"
+    },
+    "eval": {
+      "name": "eval",
+      "num_bytes": 495761,
+      "num_examples": 1511,
+      "dataset_name": "xstory_cloze"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
