@@ -6,9 +6,7 @@ from tasks.task import Task
 
 class Hellaswag(Task):
     def __init__(self, n_shots=10):
-        super().__init__('hellaswag', n_shots=n_shots)
-        self.train_ds, self.valid_ds = self.get_datasets()
-        self.prompt_intro = "İçerik"
+        super().__init__('hellaswag', n_shots=n_shots, prompt_intro="İçerik")
 
     def get_datasets(self):
         hellaswag = load_dataset("malhajar/hellaswag-tr")

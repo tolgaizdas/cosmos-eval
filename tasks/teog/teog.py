@@ -6,9 +6,7 @@ from tasks.task import Task
 
 class TEOG(Task):
     def __init__(self, n_shots=0):
-        super().__init__('teog', n_shots=n_shots)
-        self.train_ds, self.valid_ds = self.get_datasets()
-        self.prompt_intro = "Soru"
+        super().__init__('teog', n_shots=n_shots, prompt_intro="Soru")
 
     def get_datasets(self):
         teog = pd.read_csv(

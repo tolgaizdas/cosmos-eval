@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 
 from tqdm import tqdm
 
+from utils.ds_utils import limit_dataset
 from utils.eval_utils import get_results, perplexity
 
 
@@ -10,8 +11,7 @@ class Task(ABC):
     def __init__(self, name, n_shots=0, prompt_intro="İçerik", prompt_conclusion="Cevap"):
         self.name = name
 
-        self.train_ds = None  # Training dataset
-        self.valid_ds = None  # Validation dataset
+        self.train_ds, self.valid_ds = self.get_datasets()
 
         self.n_shots = n_shots  # Number of shots
 
@@ -58,7 +58,7 @@ class Task(ABC):
         faulty_prompts = [] if faulty else None
         faulty_prompts_norm = [] if faulty else None
 
-        ds = self.limit_dataset(limit)
+        ds = limit_dataset(self.valid_ds, limit)
         for data in tqdm(ds, desc="Evaluating"):
             try:
                 context, choices, gold, _ = self.get_attributes(data)
@@ -96,17 +96,6 @@ class Task(ABC):
                 ret[metric] /= total_samples
 
         return ret, faulty_prompts, faulty_prompts_norm
-
-    def limit_dataset(self, limit):
-        if limit is None:
-            return self.valid_ds
-
-        if limit > self.valid_ds.num_rows:
-            print(f"Limit is greater than the number of samples in the dataset. Setting limit to {self.valid_ds.num_rows}.")
-            limit = self.valid_ds.num_rows
-
-        ds = self.valid_ds.select(range(limit))
-        return ds
 
     @abstractmethod
     def get_attributes(self, data):

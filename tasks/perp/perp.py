@@ -7,7 +7,6 @@ from tasks.task import Task
 class Perp(Task):
     def __init__(self, n_shots=0):
         super().__init__('perp', n_shots=n_shots)
-        self.train_ds, self.valid_ds = self.get_datasets()
 
     def get_datasets(self, ds_name="medium_long_tr.csv"):
         df = pd.read_csv(f"tasks/perp/ds/{ds_name}")
