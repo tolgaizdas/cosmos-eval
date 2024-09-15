@@ -15,6 +15,7 @@ if __name__ == '__main__':
     device = args.device
     limit = args.limit
     faulty = args.print_faulty
+    include_choices = args.include_choices_in_prompt
 
     if device == 'cuda' and not torch.cuda.is_available():
         print('CUDA is not available. Using CPU instead.')
@@ -24,7 +25,13 @@ if __name__ == '__main__':
     task = load_task(task_name, n_shots)
     metrics = get_metrics(args, task_name)
 
-    ret, faulty_prompts, faulty_prompts_norm = task.eval_task(model, tokenizer, device, metrics, limit, faulty)  # TODO: limit attribute can be added to Task class
+    ret, faulty_prompts, faulty_prompts_norm = task.eval_task(model,
+                                                              tokenizer,
+                                                              device,
+                                                              metrics,
+                                                              limit,
+                                                              faulty,
+                                                              include_choices)
 
     print(f'ret: {ret}')
 
