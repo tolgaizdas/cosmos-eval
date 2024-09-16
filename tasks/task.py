@@ -2,6 +2,7 @@ import math
 import random
 from abc import ABC, abstractmethod
 
+import numpy as np
 from tqdm import tqdm
 
 from utils.ds_utils import limit_dataset
@@ -57,8 +58,7 @@ class Task(ABC):
         model.to(device)
         model.eval()
 
-        ret = {metric: 0.0 for metric in metrics}
-        total_samples = 0
+        accumulator = {metric: [] for metric in metrics}
 
         faulty_prompts = [] if faulty else None
         faulty_prompts_norm = [] if faulty else None
@@ -79,26 +79,28 @@ class Task(ABC):
                     predicted_index = results.index(max(results))
                     if faulty and predicted_index != gold:
                         faulty_prompts.append(prompt)
-                    ret["acc"] += 1.0 if predicted_index == gold else 0.0
+                    accumulator["acc"].append(1.0 if predicted_index == gold else 0.0)
 
                 # Normalized accuracy
                 if "acc_norm" in metrics:
                     predicted_index_norm = results_norm.index(max(results_norm))
                     if faulty and predicted_index_norm != gold:
                         faulty_prompts_norm.append(prompt)
-                    ret["acc_norm"] += 1.0 if predicted_index_norm == gold else 0.0
+                    accumulator["acc_norm"].append(1.0 if predicted_index_norm == gold else 0.0)
 
             # Perplexity
             if "perplexity" in metrics:
                 perp = perplexity(model, tokenizer, context, device)
                 if not math.isnan(perp):
-                    ret["perplexity"] += perp
+                    accumulator["perplexity"].append(perp)
 
-            total_samples += 1
-
-        if total_samples > 0:
-            for metric in metrics:
-                ret[metric] /= total_samples
+        ret = {}
+        for metric in metrics:
+            if accumulator[metric]:
+                mean = np.mean(accumulator[metric])
+                ret[metric] = np.round(mean, 4).item()
+            else:
+                ret[metric] = float('nan')
 
         return ret, faulty_prompts, faulty_prompts_norm
 
