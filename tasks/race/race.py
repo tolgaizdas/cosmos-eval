@@ -20,6 +20,9 @@ class Race(Task):
         return race_train, race_valid
 
     def get_attributes(self, data):
+        if "_" in data["question"]:
+            raise ValueError("Blank in question")  # TODO: Handle this case with dataset filtering
+
         ctx = data["ctx"]
         choices = data["choices"]
         gold = ord(data["answer"]) - 65  # A: 0, B: 1, C: 2, D: 3
