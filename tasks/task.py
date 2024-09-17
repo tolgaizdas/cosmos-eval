@@ -2,11 +2,10 @@ import math
 import random
 from abc import ABC, abstractmethod
 
-import numpy as np
 from tqdm import tqdm
 
 from utils.ds_utils import limit_dataset
-from utils.eval_utils import get_results, perplexity
+from utils.eval_utils import get_results, perplexity, calculate_metrics
 
 
 class Task(ABC):
@@ -19,6 +18,9 @@ class Task(ABC):
 
         self.prompt_intro = prompt_intro  # Start prompt word for the task
         self.prompt_conclusion = prompt_conclusion  # End prompt word for the task
+
+        sample_choices = self.get_attributes(self.valid_ds[0])[1]
+        self.expected_acc = 1.0 / len(sample_choices) if sample_choices else None
 
     def generate_prompt(self, ctx, ctx_choices, include_choices=False):
         prompt = ""
@@ -58,7 +60,7 @@ class Task(ABC):
         model.to(device)
         model.eval()
 
-        accumulator = {metric: [] for metric in metrics}
+        metric_args = {metric: [] for metric in metrics}
 
         faulty_prompts = [] if faulty else None
         faulty_prompts_norm = [] if faulty else None
@@ -79,29 +81,22 @@ class Task(ABC):
                     predicted_index = results.index(max(results))
                     if faulty and predicted_index != gold:
                         faulty_prompts.append(prompt)
-                    accumulator["acc"].append(1.0 if predicted_index == gold else 0.0)
+                    metric_args["acc"].append(1.0 if predicted_index == gold else 0.0)
 
                 # Normalized accuracy
                 if "acc_norm" in metrics:
                     predicted_index_norm = results_norm.index(max(results_norm))
                     if faulty and predicted_index_norm != gold:
                         faulty_prompts_norm.append(prompt)
-                    accumulator["acc_norm"].append(1.0 if predicted_index_norm == gold else 0.0)
+                    metric_args["acc_norm"].append(1.0 if predicted_index_norm == gold else 0.0)
 
             # Perplexity
             if "perplexity" in metrics:
                 perp = perplexity(model, tokenizer, context, device)
                 if not math.isnan(perp):
-                    accumulator["perplexity"].append(perp)
+                    metric_args["perplexity"].append(perp)
 
-        ret = {}
-        for metric in metrics:
-            if accumulator[metric]:
-                mean = np.mean(accumulator[metric])
-                ret[metric] = np.round(mean, 4).item()
-            else:
-                ret[metric] = float('nan')
-
+        ret = calculate_metrics(metric_args, expected_acc=self.expected_acc)
         return ret, faulty_prompts, faulty_prompts_norm
 
     @abstractmethod
