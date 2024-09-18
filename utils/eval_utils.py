@@ -109,10 +109,10 @@ def calculate_metrics(metric_args, expected_acc=None, decimals=4):
         ret[metric] = np.mean(value).item() if value else float('nan')
 
     if "acc" in ret:
-        ret["rel_acc"] = relative_accuracy(ret["acc"], expected_acc) if ret["acc"] else float('nan')
+        ret["rel_acc"] = relative_accuracy(ret["acc"], expected_acc) if ret["acc"] else 0.0
 
     if "acc_norm" in ret:
-        ret["rel_acc_norm"] = relative_accuracy(ret["acc_norm"], expected_acc) if ret["acc_norm"] else float('nan')
+        ret["rel_acc_norm"] = relative_accuracy(ret["acc_norm"], expected_acc) if ret["acc_norm"] else 0.0
 
     ret = {metric: round(value, decimals) for metric, value in ret.items()}  # Round to 4 decimal places
     return ret
