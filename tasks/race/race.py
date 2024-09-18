@@ -7,7 +7,7 @@ from utils.ds_utils import translate
 
 class Race(Task):
     def __init__(self, n_shots=0):  # TODO: Check for default n_shots
-        super().__init__('race', n_shots=n_shots, prompt_intro="", prompt_conclusion="")
+        super().__init__('race', n_shots=n_shots, prompt_intro="Metin", prompt_conclusion="Cevap")
 
     def get_datasets(self):
         race_ds = load_dataset("ehovy/race", "all")
@@ -20,6 +20,9 @@ class Race(Task):
         return race_train, race_valid
 
     def get_attributes(self, data):
+        if "_" in data["question"]:
+            raise ValueError("Blank in question")  # TODO: Handle this case with dataset filtering
+
         ctx = data["ctx"]
         choices = data["choices"]
         gold = ord(data["answer"]) - 65  # A: 0, B: 1, C: 2, D: 3
