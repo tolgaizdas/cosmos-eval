@@ -103,9 +103,9 @@ def relative_accuracy(acc, expected_acc):
     return (acc - expected_acc) / (1.0 - expected_acc)
 
 
-def calculate_metrics(accumulator, expected_acc=None, decimals=4):
+def calculate_metrics(metric_args, expected_acc=None, decimals=4):
     ret = {}
-    for metric, value in accumulator.items():
+    for metric, value in metric_args.items():
         ret[metric] = np.mean(value).item() if value else float('nan')
 
     if "acc" in ret:
