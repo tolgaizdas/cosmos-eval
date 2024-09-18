@@ -7,7 +7,7 @@ from utils.ds_utils import translate
 
 class Race(Task):
     def __init__(self, n_shots=0):  # TODO: Check for default n_shots
-        super().__init__('race', n_shots=n_shots, prompt_intro="", prompt_conclusion="")
+        super().__init__('race', n_shots=n_shots, prompt_intro="Metin", prompt_conclusion="Cevap")
 
     def get_datasets(self):
         race_ds = load_dataset("ehovy/race", "all")

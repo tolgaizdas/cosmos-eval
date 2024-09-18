@@ -20,6 +20,9 @@ def process_doc(doc):
     ctx = f'{article}\n\n{question}' if "_" not in question else f'{article}\n\nBuna göre;'  # OLD_TODO: Find a better way to handle this
     out_doc = {"ctx": ctx, "choices": choices}
     """
-    ctx = f'{doc["article"]}\n\n{doc["question"]}'
+    article = doc["article"]
+    article = article.replace("\n", " ")
+    article = " ".join(article.split())  # Remove any extra spaces between words
+    ctx = f'{article}\nSoru: {doc["question"]}'
     out_doc = {"ctx": ctx, "choices": doc["options"]}
     return out_doc

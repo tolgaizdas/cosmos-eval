@@ -37,7 +37,11 @@ class Task(ABC):
                 if n == self.n_shots:
                     break
 
-                context, choices, _, gold_text = self.get_attributes(shot)
+                try:
+                    context, choices, _, gold_text = self.get_attributes(shot)
+                except Exception:
+                    continue
+
                 if context == ctx:
                     continue
 
