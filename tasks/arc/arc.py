@@ -9,9 +9,8 @@ class ARC(Task):
 
     def get_datasets(self):
         arc_ds = load_dataset("malhajar/arc-tr-v0.2")
-        arc_train = arc_ds["test"]
         arc_valid = arc_ds["test"]
-        return arc_train, arc_valid
+        return arc_valid, arc_valid
 
     def get_attributes(self, data):
         question = data["question"]
