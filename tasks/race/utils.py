@@ -5,6 +5,18 @@ def fill_in_the_blank(question, option):
     return question
 
 
+def filter_masked_question(data):
+    return "_" not in data["question"]
+
+
+def filter_masked_article(data):
+    return "_" not in data["article"]
+
+
+def filter_doc(doc):
+    return filter_masked_article(doc) and filter_masked_question(doc)
+
+
 def process_doc(doc):
     """
     article = doc["article"]
