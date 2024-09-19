@@ -1,6 +1,6 @@
 from datasets import load_dataset
 
-from tasks.race.utils import process_doc
+from tasks.race.utils import process_doc, filter_doc
 from tasks.task import Task
 from utils.ds_utils import translate
 
@@ -14,15 +14,17 @@ class Race(Task):
         race_train = race_ds["train"]
         race_valid = race_ds["validation"]
 
+        # Filter out questions and articles with blanks
+        race_train = race_train.filter(filter_doc, load_from_cache_file=False)
+        race_valid = race_valid.filter(filter_doc, load_from_cache_file=False)
+
+        # Process the documents
         race_train = race_train.map(process_doc, load_from_cache_file=False)
         race_valid = race_valid.map(process_doc, load_from_cache_file=False)
 
         return race_train, race_valid
 
     def get_attributes(self, data):
-        if "_" in data["question"]:
-            raise ValueError("Blank in question")  # TODO: Handle this case with dataset filtering
-
         ctx = data["ctx"]
         choices = data["choices"]
         gold = ord(data["answer"]) - 65  # A: 0, B: 1, C: 2, D: 3
