@@ -9,7 +9,7 @@ class Race(Task):
         super().__init__('race', n_shots=n_shots, prompt_intro="Metin", prompt_conclusion="Cevap")
 
     def get_datasets(self):
-        #race_ds = load_dataset("ehovy/race", "all")
+        # race_ds = load_dataset("ehovy/race", "all")
         # race_train = race_ds["train"]
         # race_train = race_train.map(process_doc, load_from_cache_file=False)
         # race_valid = race_ds["validation"]
