@@ -1,0 +1,103 @@
+{
+  "builder_name": "parquet",
+  "citation": "",
+  "config_name": "all",
+  "dataset_name": "race",
+  "dataset_size": 174731024,
+  "description": "",
+  "download_checksums": {
+    "hf://datasets/ehovy/race@2fec9fd81f1dc971569a9b729c43f2f0e6436637/all/test-00000-of-00001.parquet": {
+      "num_bytes": 2075881,
+      "checksum": null
+    },
+    "hf://datasets/ehovy/race@2fec9fd81f1dc971569a9b729c43f2f0e6436637/all/train-00000-of-00001.parquet": {
+      "num_bytes": 37378263,
+      "checksum": null
+    },
+    "hf://datasets/ehovy/race@2fec9fd81f1dc971569a9b729c43f2f0e6436637/all/validation-00000-of-00001.parquet": {
+      "num_bytes": 2046503,
+      "checksum": null
+    }
+  },
+  "download_size": 41500647,
+  "features": {
+    "example_id": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "article": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "answer": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "question": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "options": {
+      "feature": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    },
+    "ctx": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "choices": {
+      "feature": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    },
+    "article_tr": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "options_tr": {
+      "feature": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    },
+    "question_tr": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 216231671,
+  "splits": {
+    "test": {
+      "name": "test",
+      "num_bytes": 8775370,
+      "num_examples": 4934,
+      "dataset_name": "race"
+    },
+    "train": {
+      "name": "train",
+      "num_bytes": 157308478,
+      "num_examples": 87866,
+      "dataset_name": "race"
+    },
+    "validation": {
+      "name": "validation",
+      "num_bytes": 8647176,
+      "num_examples": 4887,
+      "dataset_name": "race"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
