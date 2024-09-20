@@ -44,17 +44,6 @@
       },
       "_type": "Sequence"
     },
-    "ctx": {
-      "dtype": "string",
-      "_type": "Value"
-    },
-    "choices": {
-      "feature": {
-        "dtype": "string",
-        "_type": "Value"
-      },
-      "_type": "Sequence"
-    },
     "article_tr": {
       "dtype": "string",
       "_type": "Value"
