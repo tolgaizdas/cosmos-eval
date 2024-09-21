@@ -23,9 +23,9 @@ class Task(ABC):
         sample_choices = self.get_attributes(self.valid_ds[0])[1]
         self.expected_acc = 1.0 / len(sample_choices) if sample_choices else None
 
-    def get_prompt(self, data, include_choices=False):
+    def get_prompt(self, data, include_choices=False, previous_tokens=False):
         def build_prompt(context, choices, gold_text=None):
-            return generate_prompt(context, choices, gold_text=gold_text, intro=self.prompt_intro, conclusion=self.prompt_conclusion, include_choices=include_choices)
+            return generate_prompt(context, choices, gold_text=gold_text, intro=self.prompt_intro, conclusion=self.prompt_conclusion, include_choices=include_choices, previous_tokens=previous_tokens)
 
         ctx, ctx_choices, _, _ = self.get_attributes(data)
 
