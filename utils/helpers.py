@@ -38,7 +38,7 @@ def generate_previous_tokens(context, device=None):
         'text-generation',
         model=model,
         tokenizer=tokenizer,
-        device=0,
+        device=device,
         eos_token_id=tokenizer.eos_token_id # Use EOS token to stop early
     )
     r = text_generator(reversed_context, max_length=max(100, len(reversed_context)), truncation=True)[0]['generated_text']
