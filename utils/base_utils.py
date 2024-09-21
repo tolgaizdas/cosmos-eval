@@ -1,5 +1,6 @@
 import argparse
 
+import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 
@@ -15,6 +16,7 @@ def get_parser():
     parser.add_argument('--exclude-acc', action='store_true', help='Exclude accuracy')
     parser.add_argument('--exclude-acc-norm', action='store_true', help='Exclude normalized accuracy')
     parser.add_argument('--exclude-perplexity', action='store_true', help='Exclude perplexity')
+    parser.add_argument('--previous-tokens', action='store_true', help='Generate previous tokens for prompt')
     return parser
 
 
@@ -31,8 +33,12 @@ def get_metrics(args, task_name):
     return metrics
 
 
-def load_model_and_tokenizer(model_name):
-    model = AutoModelForCausalLM.from_pretrained(model_name)
+def load_model_and_tokenizer(model_name, device):
+    if device == 'cuda' and not torch.cuda.is_available():
+        print('CUDA is not available. Using CPU instead.')
+        device = 'cpu'
+
+    model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token

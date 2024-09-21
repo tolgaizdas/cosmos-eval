@@ -23,9 +23,13 @@ class Task(ABC):
         sample_choices = self.get_attributes(self.valid_ds[0])[1]
         self.expected_acc = 1.0 / len(sample_choices) if sample_choices else None
 
-    def get_prompt(self, data, include_choices=False, previous_tokens=False):
+    def get_prompt(self, data, include_choices=False, previous_tokens=False, device_for_previous_tokens=None):
         def build_prompt(context, choices, gold_text=None):
-            return generate_prompt(context, choices, gold_text=gold_text, intro=self.prompt_intro, conclusion=self.prompt_conclusion, include_choices=include_choices, previous_tokens=previous_tokens)
+            return generate_prompt(context, choices,
+                                   gold_text=gold_text,
+                                   intro=self.prompt_intro, conclusion=self.prompt_conclusion,
+                                   include_choices=include_choices,
+                                   previous_tokens=previous_tokens, device=device_for_previous_tokens)
 
         ctx, ctx_choices, _, _ = self.get_attributes(data)
 
@@ -58,8 +62,7 @@ class Task(ABC):
 
         return "".join(prompt)
 
-    def eval_task(self, model, tokenizer, device, metrics, limit=None, faulty=False, include_choices=False):
-        model.to(device)
+    def eval_task(self, model, tokenizer, metrics, limit=None, faulty=False, include_choices=False, previous_tokens=False):
         model.eval()
 
         metric_args = {metric: [] for metric in metrics}
@@ -75,8 +78,10 @@ class Task(ABC):
                 continue
 
             if "acc" in metrics or "acc_norm" in metrics:
-                prompt = self.get_prompt(data, include_choices=include_choices)
-                results, results_norm = get_results(model, tokenizer, prompt, choices, device)
+                prompt = self.get_prompt(data,
+                                         include_choices=include_choices,
+                                         previous_tokens=previous_tokens, device_for_previous_tokens=model.device)
+                results, results_norm = get_results(model, tokenizer, prompt, choices, model.device)
 
                 # Accuracy
                 if "acc" in metrics:
@@ -94,7 +99,7 @@ class Task(ABC):
 
             # Perplexity
             if "perplexity" in metrics:
-                perp = perplexity(model, tokenizer, context, device)
+                perp = perplexity(model, tokenizer, context, model.device)
                 if not math.isnan(perp):
                     metric_args["perplexity"].append(perp)
 

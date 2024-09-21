@@ -1,5 +1,3 @@
-import torch
-
 from utils.base_utils import get_parser, get_metrics, load_task, load_model_and_tokenizer
 
 if __name__ == '__main__':
@@ -16,22 +14,19 @@ if __name__ == '__main__':
     limit = args.limit
     faulty = args.print_faulty
     include_choices = args.include_choices_in_prompt
+    previous_tokens = args.previous_tokens
 
-    if device == 'cuda' and not torch.cuda.is_available():
-        print('CUDA is not available. Using CPU instead.')
-        device = 'cpu'
-
-    model, tokenizer = load_model_and_tokenizer(model_path)
+    model, tokenizer = load_model_and_tokenizer(model_path, device)
     task = load_task(task_name, n_shots)
     metrics = get_metrics(args, task_name)
 
     ret, faulty_prompts, faulty_prompts_norm = task.eval_task(model,
                                                               tokenizer,
-                                                              device,
                                                               metrics,
-                                                              limit,
-                                                              faulty,
-                                                              include_choices)
+                                                              limit=limit,
+                                                              faulty=faulty,
+                                                              include_choices=include_choices,
+                                                              previous_tokens=previous_tokens)
 
     print(f'ret: {ret}')
 
