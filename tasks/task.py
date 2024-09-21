@@ -4,9 +4,10 @@ from abc import ABC, abstractmethod
 
 from tqdm import tqdm
 
+from utils import PromptGenerator
 from utils.ds_utils import limit_dataset
 from utils.eval_utils import get_results, perplexity
-from utils.helpers import calculate_metrics, generate_prompt
+from utils.metric_utils import calculate_metrics
 
 
 class Task(ABC):
@@ -17,19 +18,15 @@ class Task(ABC):
 
         self.n_shots = n_shots  # Number of shots
 
-        self.prompt_intro = prompt_intro  # Start prompt word for the task
-        self.prompt_conclusion = prompt_conclusion  # End prompt word for the task
-
         sample_choices = self.get_attributes(self.valid_ds[0])[1]
         self.expected_acc = 1.0 / len(sample_choices) if sample_choices else None
 
-    def get_prompt(self, data, include_choices=False, previous_tokens=False, device_for_previous_tokens=None):
+        self.prompt_generator = PromptGenerator(prompt_intro, prompt_conclusion)
+
+    def get_prompt(self, data, include_choices=False, previous_tokens=False, device_for_previous_tokens="cpu"):
         def build_prompt(context, choices, gold_text=None):
-            return generate_prompt(context, choices,
-                                   gold_text=gold_text,
-                                   intro=self.prompt_intro, conclusion=self.prompt_conclusion,
-                                   include_choices=include_choices,
-                                   previous_tokens=previous_tokens, device=device_for_previous_tokens)
+            return self.prompt_generator.generate_prompt(context, choices, gold_text=gold_text, include_choices=include_choices,
+                                                         previous_tokens=previous_tokens, device=device_for_previous_tokens)
 
         ctx, ctx_choices, _, _ = self.get_attributes(data)
 

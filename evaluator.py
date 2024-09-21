@@ -1,4 +1,6 @@
-from utils.base_utils import get_parser, get_metrics, load_task, load_model_and_tokenizer
+from utils.base_utils import get_parser, load_task, load_model_and_tokenizer
+
+from utils.metric_utils import get_metrics
 
 if __name__ == '__main__':
     args = get_parser().parse_args()

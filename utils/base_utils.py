@@ -20,19 +20,6 @@ def get_parser():
     return parser
 
 
-def get_metrics(args, task_name):
-    metrics = ["acc", "acc_norm", "perplexity"]
-    if args.exclude_acc or task_name == 'perp':
-        metrics.remove("acc")
-    if args.exclude_acc_norm or task_name == 'perp':
-        metrics.remove("acc_norm")
-    if task_name == 'perp' and (args.exclude_acc or args.exclude_acc_norm):
-        print('Perplexity task does not require acc and acc_norm. Excluding them.')
-    if args.exclude_perplexity:
-        metrics.remove("perplexity")
-    return metrics
-
-
 def load_model_and_tokenizer(model_name, device):
     if device == 'cuda' and not torch.cuda.is_available():
         print('CUDA is not available. Using CPU instead.')
