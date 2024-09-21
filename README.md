@@ -70,7 +70,7 @@ pip install -r requirements.txt
 | `--exclude-acc`               | Exclude accuracy from the metrics              |    No    |    `False`     |
 | `--exclude-acc-norm`          | Exclude normalized accuracy from the metrics   |    No    |    `False`     |
 | `--exclude-perplexity`        | Exclude perplexity from the metrics            |    No    |    `False`     |
-| `--previous-tokens`           | Generate previous tokens for prompt            |    No    |    `False`     |
+| `--generate-previous-tokens`  | Generate previous tokens for prompt            |    No    |    `False`     |
 
 ### Example Usage
 

@@ -35,7 +35,7 @@ class PromptGenerator:
         if previous_tokens:
             context = self.generate_previous_tokens(context, device)
 
-        prompt = [intro + context + "\n"]
+        prompt: list[str] = [intro + context + "\n"]
 
         if include_choices:
             for j in range(len(choices)):

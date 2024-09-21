@@ -16,7 +16,7 @@ if __name__ == '__main__':
     limit = args.limit
     faulty = args.print_faulty
     include_choices = args.include_choices_in_prompt
-    previous_tokens = args.previous_tokens
+    previous_tokens = args.generate_previous_tokens
 
     model, tokenizer = load_model_and_tokenizer(model_path, device)
     task = load_task(task_name, n_shots)

@@ -16,7 +16,7 @@ def get_parser():
     parser.add_argument('--exclude-acc', action='store_true', help='Exclude accuracy')
     parser.add_argument('--exclude-acc-norm', action='store_true', help='Exclude normalized accuracy')
     parser.add_argument('--exclude-perplexity', action='store_true', help='Exclude perplexity')
-    parser.add_argument('--previous-tokens', action='store_true', help='Generate previous tokens for prompt')
+    parser.add_argument('--generate-previous-tokens', action='store_true', help='Generate previous tokens for prompt')
     return parser
 
 
