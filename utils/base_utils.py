@@ -43,25 +43,25 @@ def load_model_and_tokenizer(model_name):
 def load_task(task_name, n_shots):
     task_name = task_name.lower().strip()
     if task_name == 'hellaswag':
-        from tasks.hellaswag.hellaswag import Hellaswag
+        from tasks import Hellaswag
         task = Hellaswag(n_shots) if n_shots is not None else Hellaswag()  # TODO: default n_shots can be handled in the task class
     elif task_name == 'arc':
-        from tasks.arc.arc import ARC
+        from tasks import ARC
         task = ARC(n_shots) if n_shots is not None else ARC()
     elif task_name == 'teog':
-        from tasks.teog.teog import TEOG
+        from tasks import TEOG
         task = TEOG(n_shots) if n_shots is not None else TEOG()
     elif task_name == 'perp':
-        from tasks.perp.perp import Perp
+        from tasks import Perp
         task = Perp(n_shots) if n_shots is not None else Perp()
     elif task_name == 'openbookqa':
-        from tasks.openbookqa.openbookqa import OpenBookQA
+        from tasks import OpenBookQA
         task = OpenBookQA(n_shots) if n_shots is not None else OpenBookQA()
     elif task_name == 'xstorycloze':
-        from tasks.xstorycloze.xstorycloze import XStoryCloze
+        from tasks import XStoryCloze
         task = XStoryCloze(n_shots) if n_shots is not None else XStoryCloze()
     elif task_name == 'race':
-        from tasks.race.race import Race
+        from tasks import Race
         task = Race(n_shots) if n_shots is not None else Race()
     else:
         raise ValueError(f'Unknown task: {task_name}')
