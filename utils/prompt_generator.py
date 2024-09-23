@@ -12,7 +12,7 @@ class PromptGenerator:
 
     def generate_previous_tokens(self, context, device="cpu"):
         if self.model is None or self.tokenizer is None:
-            self.model, self.tokenizer = load_model_and_tokenizer("path/to/model", device)
+            raise ValueError("Model and tokenizer for generating previous tokens are not provided.")
 
         model, tokenizer = self.model, self.tokenizer  # Just to make it easier to read
 
