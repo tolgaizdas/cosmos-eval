@@ -2,7 +2,7 @@
 **/.idea/
 **/venv/
 **/results/
-**/todo.txt
+**/todo.md
 **/test.py
 **/run.py
 **/cache*

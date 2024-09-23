@@ -11,8 +11,8 @@ class PromptGenerator:
         self.model, self.tokenizer = None, None  # Model and tokenizer for generating previous tokens
 
     def generate_previous_tokens(self, context, device="cpu"):
-        if self.model is None or self.tokenizer is None:
-            raise ValueError("Model and tokenizer for generating previous tokens are not provided.")
+        assert self.model is not None, "Model for generating previous tokens is not provided."
+        assert self.tokenizer is not None, "Tokenizer for generating previous tokens is not provided."
 
         model, tokenizer = self.model, self.tokenizer  # Just to make it easier to read
 
