@@ -65,6 +65,7 @@ pip install -r requirements.txt
 | `--n_shots`                   | Number of shots for few-shot learning          |    No    | `task default` |
 | `--device`                    | Device to run the evaluation (`cpu` or `cuda`) |    No    |     `cuda`     |
 | `--limit`                     | Limit the number of samples to evaluate        |    No    |     `None`     |
+| `--previous-token-generator`  | Model for generating previous tokens           |    No    |     `None`     |
 | `--print-faulty`              | Print faulty prompts                           |    No    |    `False`     |
 | `--include-choices-in-prompt` | Include choices in prompt                      |    No    |    `False`     |
 | `--exclude-acc`               | Exclude accuracy from the metrics              |    No    |    `False`     |

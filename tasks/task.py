@@ -4,8 +4,10 @@ from abc import ABC, abstractmethod
 
 from tqdm import tqdm
 
+from utils import PromptGenerator
 from utils.ds_utils import limit_dataset
-from utils.eval_utils import get_results, perplexity, calculate_metrics
+from utils.eval_utils import get_results, perplexity
+from utils.metric_utils import calculate_metrics
 
 
 class Task(ABC):
@@ -16,14 +18,19 @@ class Task(ABC):
 
         self.n_shots = n_shots  # Number of shots
 
-        self.prompt_intro = prompt_intro  # Start prompt word for the task
-        self.prompt_conclusion = prompt_conclusion  # End prompt word for the task
-
         sample_choices = self.get_attributes(self.valid_ds[0])[1]
         self.expected_acc = 1.0 / len(sample_choices) if sample_choices else None
 
-    def generate_prompt(self, ctx, ctx_choices, include_choices=False):
-        prompt = ""
+        self.prompt_generator = PromptGenerator(prompt_intro, prompt_conclusion)
+
+    def get_prompt(self, data, include_choices=False, previous_tokens=False, device_for_previous_tokens="cpu"):
+        def build_prompt(context, choices, gold_text=None):
+            return self.prompt_generator.generate_prompt(context, choices, gold_text=gold_text, include_choices=include_choices,
+                                                         previous_tokens=previous_tokens, device=device_for_previous_tokens)
+
+        ctx, ctx_choices, _, _ = self.get_attributes(data)
+
+        prompt = []
 
         if self.train_ds is None and self.n_shots > 0:
             print("Training dataset is not available. Setting n_shots to 0.")
@@ -45,23 +52,14 @@ class Task(ABC):
                 if context == ctx:
                     continue
 
-                prompt += (f"{self.prompt_intro}: " if self.prompt_intro else '') + context + "\n"
-                if include_choices:
-                    for j in range(len(choices)):
-                        prompt += f"{chr(j + 65)}. " + choices[j] + "\n"
-
-                prompt += (f"{self.prompt_conclusion}: " if self.prompt_conclusion else '') + gold_text + "\n\n"
+                prompt.append(build_prompt(context, choices, gold_text))
                 n += 1
 
-        prompt += (f"{self.prompt_intro}: " if self.prompt_intro else '') + ctx + "\n"
-        if include_choices:
-            for j in range(len(ctx_choices)):
-                prompt += f"{chr(j + 65)}. " + ctx_choices[j] + "\n"
-        prompt += f"{self.prompt_conclusion}: " if self.prompt_conclusion else ''
-        return prompt
+        prompt.append(build_prompt(ctx, ctx_choices))
 
-    def eval_task(self, model, tokenizer, device, metrics, limit=None, faulty=False, include_choices=False):
-        model.to(device)
+        return "".join(prompt)
+
+    def eval_task(self, model, tokenizer, metrics, limit=None, faulty=False, include_choices=False, previous_tokens=False):
         model.eval()
 
         metric_args = {metric: [] for metric in metrics}
@@ -77,8 +75,10 @@ class Task(ABC):
                 continue
 
             if "acc" in metrics or "acc_norm" in metrics:
-                prompt = self.generate_prompt(context, choices, include_choices)
-                results, results_norm = get_results(model, tokenizer, prompt, choices, device)
+                prompt = self.get_prompt(data,
+                                         include_choices=include_choices,
+                                         previous_tokens=previous_tokens, device_for_previous_tokens=model.device)
+                results, results_norm = get_results(model, tokenizer, prompt, choices, model.device)
 
                 # Accuracy
                 if "acc" in metrics:
@@ -96,7 +96,7 @@ class Task(ABC):
 
             # Perplexity
             if "perplexity" in metrics:
-                perp = perplexity(model, tokenizer, context, device)
+                perp = perplexity(model, tokenizer, context, model.device)
                 if not math.isnan(perp):
                     metric_args["perplexity"].append(perp)
 

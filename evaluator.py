@@ -1,6 +1,6 @@
-import torch
+from utils.base_utils import get_parser, load_task, load_model_and_tokenizer
 
-from utils.base_utils import get_parser, get_metrics, load_task, load_model_and_tokenizer
+from utils.metric_utils import get_metrics
 
 if __name__ == '__main__':
     args = get_parser().parse_args()
@@ -16,22 +16,25 @@ if __name__ == '__main__':
     limit = args.limit
     faulty = args.print_faulty
     include_choices = args.include_choices_in_prompt
+    previous_token_generator = args.previous_token_generator
 
-    if device == 'cuda' and not torch.cuda.is_available():
-        print('CUDA is not available. Using CPU instead.')
-        device = 'cpu'
+    previous_tokens = previous_token_generator is not None  # If previous_token_generator is provided, use previous tokens
 
-    model, tokenizer = load_model_and_tokenizer(model_path)
+    model, tokenizer = load_model_and_tokenizer(model_path, device)
+
     task = load_task(task_name, n_shots)
+    if previous_tokens:
+        task.prompt_generator.model, task.prompt_generator.tokenizer = load_model_and_tokenizer(previous_token_generator, device)
+
     metrics = get_metrics(args, task_name)
 
     ret, faulty_prompts, faulty_prompts_norm = task.eval_task(model,
                                                               tokenizer,
-                                                              device,
                                                               metrics,
-                                                              limit,
-                                                              faulty,
-                                                              include_choices)
+                                                              limit=limit,
+                                                              faulty=faulty,
+                                                              include_choices=include_choices,
+                                                              previous_tokens=previous_tokens)
 
     print(f'ret: {ret}')
 
