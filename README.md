@@ -62,15 +62,15 @@ pip install -r requirements.txt
 |-------------------------------|------------------------------------------------|:--------:|:--------------:|
 | `--model`                     | Path to the pre-trained model                  |   Yes    |      N/A       |
 | `--task`                      | Task name for model evaluation                 |   Yes    |      N/A       |
-| `--num_fewshot`               | Number of shots for few-shot learning          |    No    | `task default` |
+| `--n_shots`                   | Number of shots for few-shot learning          |    No    | `task default` |
 | `--device`                    | Device to run the evaluation (`cpu` or `cuda`) |    No    |     `cuda`     |
 | `--limit`                     | Limit the number of samples to evaluate        |    No    |     `None`     |
-| `--previous_token_generator`  | Model for generating previous tokens           |    No    |     `None`     |
-| `--print_faulty`              | Print faulty prompts                           |    No    |    `False`     |
-| `--include_choices_in_prompt` | Include choices in prompt                      |    No    |    `False`     |
-| `--exclude_acc`               | Exclude accuracy from the metrics              |    No    |    `False`     |
-| `--exclude_acc_norm`          | Exclude normalized accuracy from the metrics   |    No    |    `False`     |
-| `--exclude_perplexity`        | Exclude perplexity from the metrics            |    No    |    `False`     |
+| `--previous-token-generator`  | Model for generating previous tokens           |    No    |     `None`     |
+| `--print-faulty`              | Print faulty prompts                           |    No    |    `False`     |
+| `--include-choices-in-prompt` | Include choices in prompt                      |    No    |    `False`     |
+| `--exclude-acc`               | Exclude accuracy from the metrics              |    No    |    `False`     |
+| `--exclude-acc-norm`          | Exclude normalized accuracy from the metrics   |    No    |    `False`     |
+| `--exclude-perplexity`        | Exclude perplexity from the metrics            |    No    |    `False`     |
 
 ### Example Usage
 
@@ -83,17 +83,17 @@ python evaluator.py --model path/to/model --task task_name
 #### Few-Shot Learning with GPU
 
 ```bash
-python evaluator.py --model path/to/model --task task_name --num_fewshot 5 --device cuda
+python evaluator.py --model path/to/model --task task_name --n_shots 5 --device cuda
 ```
 
 #### Limit Samples and Print Faulty Prompts
 
 ```bash
-python evaluator.py --model path/to/model --task task_name --limit 100 --print_faulty
+python evaluator.py --model path/to/model --task task_name --limit 100 --print-faulty
 ```
 
 #### Custom Metrics Evaluation
 
 ```bash
-python evaluator.py --model path/to/model --task task_name --exclude_acc --exclude_perplexity
+python evaluator.py --model path/to/model --task task_name --exclude-acc --exclude-perplexity
 ```

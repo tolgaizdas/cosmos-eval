@@ -8,15 +8,15 @@ def get_parser():
     parser = argparse.ArgumentParser(description='cosmos-eval')
     parser.add_argument('--model', type=str, required=True, help='Path to the model')
     parser.add_argument('--task', type=str, required=True, help='Task to evaluate')
-    parser.add_argument('--num_fewshot', type=int, required=False, default=None, help='Number of shots')
+    parser.add_argument('--n_shots', type=int, required=False, default=None, help='Number of shots')
     parser.add_argument('--device', type=str, required=False, default='cuda', help='Device to use')
     parser.add_argument('--limit', type=int, required=False, default=None, help='Limit the number of samples')
-    parser.add_argument('--previous_token_generator', type=str, required=False, default=None, help='Model for generating previous tokens')
-    parser.add_argument('--print_faulty', action='store_true', help='Print faulty prompts')
-    parser.add_argument('--include_choices_in_prompt', action='store_true', help='Include choices in prompt')
-    parser.add_argument('--exclude_acc', action='store_true', help='Exclude accuracy')
-    parser.add_argument('--exclude_acc_norm', action='store_true', help='Exclude normalized accuracy')
-    parser.add_argument('--exclude_perplexity', action='store_true', help='Exclude perplexity')
+    parser.add_argument('--previous-token-generator', type=str, required=False, default=None, help='Model for generating previous tokens')
+    parser.add_argument('--print-faulty', action='store_true', help='Print faulty prompts')
+    parser.add_argument('--include-choices-in-prompt', action='store_true', help='Include choices in prompt')
+    parser.add_argument('--exclude-acc', action='store_true', help='Exclude accuracy')
+    parser.add_argument('--exclude-acc-norm', action='store_true', help='Exclude normalized accuracy')
+    parser.add_argument('--exclude-perplexity', action='store_true', help='Exclude perplexity')
     return parser
 
 
