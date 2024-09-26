@@ -62,7 +62,7 @@ pip install -r requirements.txt
 |-------------------------------|------------------------------------------------|:--------:|:--------------:|
 | `--model`                     | Path to the pre-trained model                  |   Yes    |      N/A       |
 | `--task`                      | Task name for model evaluation                 |   Yes    |      N/A       |
-| `--n_shots`                   | Number of shots for few-shot learning          |    No    | `task default` |
+| `--n-shots`                   | Number of shots for few-shot learning          |    No    | `task default` |
 | `--device`                    | Device to run the evaluation (`cpu` or `cuda`) |    No    |     `cuda`     |
 | `--limit`                     | Limit the number of samples to evaluate        |    No    |     `None`     |
 | `--previous-token-generator`  | Model for generating previous tokens           |    No    |     `None`     |
@@ -83,7 +83,7 @@ python evaluator.py --model path/to/model --task task_name
 #### Few-Shot Learning with GPU
 
 ```bash
-python evaluator.py --model path/to/model --task task_name --n_shots 5 --device cuda
+python evaluator.py --model path/to/model --task task_name --n-shots 5 --device cuda
 ```
 
 #### Limit Samples and Print Faulty Prompts

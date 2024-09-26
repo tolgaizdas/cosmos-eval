@@ -8,7 +8,7 @@ def get_parser():
     parser = argparse.ArgumentParser(description='cosmos-eval')
     parser.add_argument('--model', type=str, required=True, help='Path to the model')
     parser.add_argument('--task', type=str, required=True, help='Task to evaluate')
-    parser.add_argument('--n_shots', type=int, required=False, default=None, help='Number of shots')
+    parser.add_argument('--n-shots', type=int, required=False, default=None, help='Number of shots')
     parser.add_argument('--device', type=str, required=False, default='cuda', help='Device to use')
     parser.add_argument('--limit', type=int, required=False, default=None, help='Limit the number of samples')
     parser.add_argument('--previous-token-generator', type=str, required=False, default=None, help='Model for generating previous tokens')
