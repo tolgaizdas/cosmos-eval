@@ -10,7 +10,7 @@ if __name__ == '__main__':
             print(f'{arg}: {attr}')
 
     model_path = args.model
-    n_shots = args.n_shots
+    n_shots = args.num_fewshot
     task_name = args.task
     device = args.device
     limit = args.limit
