@@ -1,5 +1,7 @@
 import torch
 
+from utils.model_utils import get_max_length
+
 
 def get_log_likelihood(model, input_ids, target_ids=None):
     if target_ids is None:
@@ -19,7 +21,7 @@ def get_byte_length(tokenizer, token_id):
 
 
 def get_log_probs(model, input_ids):
-    max_length = model.config.n_positions
+    max_length = get_max_length(model)
     if input_ids.shape[1] <= max_length:
         with torch.no_grad():
             outputs = model(input_ids)
@@ -68,7 +70,7 @@ def perplexity(model, tokenizer, text, device):
     """
     encodings = tokenizer(text, return_tensors="pt").to(device)
 
-    max_length = model.config.n_positions
+    max_length = get_max_length(model)
     stride = 512  # TODO: Stride can be an argument or a parameter of the model
     seq_len = encodings.input_ids.size(1)
 
