@@ -16,7 +16,8 @@ class PromptGenerator:
 
         model, tokenizer = self.model, self.tokenizer  # Just to make it easier to read
 
-        reversed_context = tokenizer.decode(tokenizer.encode(context)[::-1], skip_special_tokens=True)
+        encoded_context = tokenizer.encode(context)
+        reversed_context = tokenizer.decode(encoded_context[::-1], skip_special_tokens=True)
         text_generator = pipeline(
             'text-generation',
             model=model,
@@ -24,7 +25,8 @@ class PromptGenerator:
             device=model.device,
             eos_token_id=tokenizer.eos_token_id  # Use EOS token to stop early
         )
-        r = text_generator(reversed_context, max_length=max(100, len(reversed_context)), truncation=True)[0]['generated_text']
+        max_length = len(encoded_context) * 2
+        r = text_generator(reversed_context, max_length=max_length, truncation=True)[0]['generated_text']
         context_with_prev = tokenizer.decode(tokenizer.encode(r)[::-1])
         return context_with_prev
 
