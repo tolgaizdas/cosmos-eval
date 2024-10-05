@@ -28,12 +28,12 @@ class PromptGenerator:
         context_with_prev = tokenizer.decode(tokenizer.encode(r)[::-1])
         return context_with_prev
 
-    def generate_prompt(self, context, choices, gold_text=None, include_choices=False, previous_tokens=False, device="cpu"):
+    def generate_prompt(self, context, choices, gold_text=None, include_choices=False, previous_tokens=False):
         intro = f"{self.intro}: " if self.intro else ''
         conclusion = f"{self.conclusion}: " if self.conclusion else ''
 
         if previous_tokens:
-            context = self.generate_previous_tokens(context, device)
+            context = self.generate_previous_tokens(context)
 
         prompt: list[str] = [intro + context + "\n"]
 

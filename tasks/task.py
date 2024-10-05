@@ -23,10 +23,9 @@ class Task(ABC):
 
         self.prompt_generator = PromptGenerator(prompt_intro, prompt_conclusion)
 
-    def get_prompt(self, data, include_choices=False, previous_tokens=False, device_for_previous_tokens="cpu"):
+    def get_prompt(self, data, include_choices=False, previous_tokens=False):
         def build_prompt(context, choices, gold_text=None):
-            return self.prompt_generator.generate_prompt(context, choices, gold_text=gold_text, include_choices=include_choices,
-                                                         previous_tokens=previous_tokens, device=device_for_previous_tokens)
+            return self.prompt_generator.generate_prompt(context, choices, gold_text=gold_text, include_choices=include_choices, previous_tokens=previous_tokens)
 
         ctx, ctx_choices, _, _ = self.get_attributes(data)
 
@@ -75,9 +74,7 @@ class Task(ABC):
                 continue
 
             if "acc" in metrics or "acc_norm" in metrics:
-                prompt = self.get_prompt(data,
-                                         include_choices=include_choices,
-                                         previous_tokens=previous_tokens, device_for_previous_tokens=model.device)
+                prompt = self.get_prompt(data, include_choices=include_choices, previous_tokens=previous_tokens)
                 results, results_norm = get_results(model, tokenizer, prompt, choices, model.device)
 
                 # Accuracy
