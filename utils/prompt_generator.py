@@ -1,7 +1,5 @@
 from transformers import pipeline
 
-from utils.base_utils import load_model_and_tokenizer
-
 
 class PromptGenerator:
     def __init__(self, prompt_intro, prompt_conclusion):
