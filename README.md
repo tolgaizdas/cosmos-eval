@@ -66,6 +66,8 @@ pip install -r requirements.txt
 | `--device`                    | Device to run the evaluation (`cpu` or `cuda`) |    No    |     `cuda`     |
 | `--limit`                     | Limit the number of samples to evaluate        |    No    |     `None`     |
 | `--previous-token-generator`  | Model for generating previous tokens           |    No    |     `None`     |
+| `--explicit-tokenizer`        | Explicit tokenizer to use                      |    No    |     `None`     |
+| `--from-tf`                   | Load model from TensorFlow                     |    No    |    `False`     |
 | `--print-faulty`              | Print faulty prompts                           |    No    |    `False`     |
 | `--include-choices-in-prompt` | Include choices in prompt                      |    No    |    `False`     |
 | `--exclude-acc`               | Exclude accuracy from the metrics              |    No    |    `False`     |

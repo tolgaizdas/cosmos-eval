@@ -12,6 +12,8 @@ def get_parser():
     parser.add_argument('--device', type=str, required=False, default='cuda', help='Device to use')
     parser.add_argument('--limit', type=int, required=False, default=None, help='Limit the number of samples')
     parser.add_argument('--previous-token-generator', type=str, required=False, default=None, help='Model for generating previous tokens')
+    parser.add_argument('--explicit-tokenizer', type=str, required=False, default=None, help='Explicit tokenizer to use')
+    parser.add_argument('--from-tf', action='store_true', help='Load model from TensorFlow')
     parser.add_argument('--print-faulty', action='store_true', help='Print faulty prompts')
     parser.add_argument('--include-choices-in-prompt', action='store_true', help='Include choices in prompt')
     parser.add_argument('--exclude-acc', action='store_true', help='Exclude accuracy')
@@ -20,13 +22,12 @@ def get_parser():
     return parser
 
 
-def load_model_and_tokenizer(model_name, device):
+def load_model_and_tokenizer(model_name, device, from_tf=False, explicit_tokenizer=None):
     if device == 'cuda' and not torch.cuda.is_available():
         print('CUDA is not available. Using CPU instead.')
         device = 'cpu'
-
-    model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForCausalLM.from_pretrained(model_name, from_tf=from_tf).to(device)
+    tokenizer = AutoTokenizer.from_pretrained(explicit_tokenizer if explicit_tokenizer is not None else model_name)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
         tokenizer.pad_token_id = tokenizer.eos_token_id
