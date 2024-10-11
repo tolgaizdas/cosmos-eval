@@ -80,6 +80,8 @@ def print_results(model_path, task_name, n_shots, limit, ret):
     for metric, value in ret.items():
         if value is not None and metric not in ["rel_acc", "rel_acc_norm"]:
             table_data.append([metric, f"{value:.2f}"])
+            if f"rel_{metric}" in ret:
+                table_data.append([f"rel_{metric}", f"{ret[f'rel_{metric}']:.2f}"])
 
     # Print the results in horizontal table format
     print("\nResults:")
