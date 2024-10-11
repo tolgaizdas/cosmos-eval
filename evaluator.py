@@ -1,6 +1,7 @@
-from utils.base_utils import get_parser, load_task, load_model_and_tokenizer
+from utils.base_utils import get_parser, load_task, load_model_and_tokenizer, print_results
 
 from utils.metric_utils import get_metrics
+
 
 if __name__ == '__main__':
     args = get_parser().parse_args()
@@ -38,7 +39,8 @@ if __name__ == '__main__':
                                                               include_choices=include_choices,
                                                               previous_tokens=previous_tokens)
 
-    print(f'ret: {ret}')
+
+    print_results(model_path, task_name, n_shots, limit, ret)
 
     if faulty:
         print(f'faulty_prompts: {faulty_prompts}')

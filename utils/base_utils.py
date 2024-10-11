@@ -1,4 +1,5 @@
 import argparse
+from tabulate import tabulate
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -64,3 +65,23 @@ def load_task(task_name, n_shots):
         print(f'n_shots is not provided. Using default value: {task.n_shots}')
 
     return task
+
+
+def print_results(model_path, task_name, n_shots, limit, ret):
+    table_data = [
+        ["model", model_path],
+        ["task", task_name],
+        ["few-shots", n_shots],
+    ]
+
+    if limit is not None:
+        table_data.append(["limit", limit])
+
+    for metric, value in ret.items():
+        if value is not None and metric not in ["rel_acc", "rel_acc_norm"]:
+            table_data.append([metric, f"{value:.2f}"])
+
+    # Print the results in horizontal table format
+    print("\nResults:")
+    transposed_table = list(zip(*table_data))
+    print(tabulate(transposed_table, headers="firstrow", tablefmt="grid"))
