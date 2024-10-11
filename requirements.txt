@@ -1,7 +1,8 @@
 datasets~=2.20.0
-tqdm~=4.66.4
-numpy
-torch~=2.4.0
-transformers~=4.43.3
+tqdm~=4.66.5
+numpy~=2.1.1
+torch~=2.4.1
+transformers~=4.43.4
 pandas~=2.2.2
 deep-translator~=1.11.4
+nltk~=3.9.1
