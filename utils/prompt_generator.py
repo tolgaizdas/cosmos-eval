@@ -1,6 +1,8 @@
 from transformers import pipeline
 import nltk
 
+from utils.model_utils import get_max_length
+
 nltk.download('punkt_tab')
 from nltk.tokenize import PunktTokenizer
 
@@ -48,7 +50,7 @@ class PromptGenerator:
             device=model.device,
             eos_token_id=tokenizer.eos_token_id  # Use EOS token to stop early
         )
-        max_length = len(encoded_context) * 2
+        max_length = min(len(encoded_context) * 2, get_max_length(model))
         r = text_generator(reversed_context, max_length=max_length, truncation=True)[0]['generated_text']
         context_with_prev = tokenizer.decode(tokenizer.encode(r)[::-1])
         return self.remove_first_sentence(context_with_prev)
