@@ -78,7 +78,7 @@ def print_results(model_path, task_name, n_shots, limit, ret):
         table_data.append(["limit", limit])
 
     for metric, value in ret.items():
-        if value is not None and metric not in ["rel_acc", "rel_acc_norm"]:
+        if value is not None and "rel_" not in metric:
             table_data.append([metric, f"{value:.2f}"])
             if f"rel_{metric}" in ret:
                 table_data.append([f"rel_{metric}", f"{ret[f'rel_{metric}']:.2f}"])
