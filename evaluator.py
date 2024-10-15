@@ -18,7 +18,9 @@ if __name__ == '__main__':
     faulty = args.print_faulty
     include_choices = args.include_choices_in_prompt
     previous_token_generator = args.previous_token_generator
+    previous_explicit_tokenizer = args.previous_explicit_tokenizer
     from_tf = args.from_tf
+    previous_from_tf = args.previous_from_tf
     explicit_tokenizer = args.explicit_tokenizer
 
     previous_tokens = previous_token_generator is not None  # If previous_token_generator is provided, use previous tokens
@@ -27,7 +29,7 @@ if __name__ == '__main__':
 
     task = load_task(task_name, n_shots)
     if previous_tokens:
-        task.prompt_generator.model, task.prompt_generator.tokenizer = load_model_and_tokenizer(previous_token_generator, device)
+        task.prompt_generator.model, task.prompt_generator.tokenizer = load_model_and_tokenizer(previous_token_generator, device, from_tf=previous_from_tf, explicit_tokenizer=previous_explicit_tokenizer)
 
     metrics = get_metrics(args, task_name)
 
