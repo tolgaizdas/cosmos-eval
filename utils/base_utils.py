@@ -1,4 +1,5 @@
 import argparse
+from tabulate import tabulate
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -12,8 +13,10 @@ def get_parser():
     parser.add_argument('--device', type=str, required=False, default='cuda', help='Device to use')
     parser.add_argument('--limit', type=int, required=False, default=None, help='Limit the number of samples')
     parser.add_argument('--previous-token-generator', type=str, required=False, default=None, help='Model for generating previous tokens')
+    parser.add_argument('--previous-explicit-tokenizer', type=str, required=False, default=None, help='Explicit tokenizer for previous token generator')
     parser.add_argument('--explicit-tokenizer', type=str, required=False, default=None, help='Explicit tokenizer to use')
     parser.add_argument('--from-tf', action='store_true', help='Load model from TensorFlow')
+    parser.add_argument('--previous-from-tf', action='store_true', help='Load previous token generator from TensorFlow')
     parser.add_argument('--print-faulty', action='store_true', help='Print faulty prompts')
     parser.add_argument('--include-choices-in-prompt', action='store_true', help='Include choices in prompt')
     parser.add_argument('--exclude-acc', action='store_true', help='Exclude accuracy')
@@ -64,3 +67,25 @@ def load_task(task_name, n_shots):
         print(f'n_shots is not provided. Using default value: {task.n_shots}')
 
     return task
+
+
+def print_results(model_path, task_name, n_shots, limit, ret):
+    table_data = [
+        ["model", model_path],
+        ["task", task_name],
+        ["few-shots", n_shots],
+    ]
+
+    if limit is not None:
+        table_data.append(["limit", limit])
+
+    for metric, value in ret.items():
+        if value is not None and "rel_" not in metric:
+            table_data.append([metric, f"{value:.2f}"])
+            if f"rel_{metric}" in ret:
+                table_data.append([f"rel_{metric}", f"{ret[f'rel_{metric}']:.2f}"])
+
+    # Print the results in horizontal table format
+    print("\nResults:")
+    transposed_table = list(zip(*table_data))
+    print(tabulate(transposed_table, headers="firstrow", tablefmt="grid"))
