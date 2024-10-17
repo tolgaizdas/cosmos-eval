@@ -60,6 +60,9 @@ def load_task(task_name, n_shots):
     elif task_name == 'race':
         from tasks import Race
         task = Race(n_shots) if n_shots is not None else Race()
+    elif task_name == 'xcopa':
+        from tasks import XCOPA
+        task = XCOPA(n_shots) if n_shots is not None else XCOPA()
     else:
         raise ValueError(f'Unknown task: {task_name}')
 

@@ -12,6 +12,7 @@ Here are the tasks and the corresponding datasets used for evaluation. Some data
 - **Perplexity (Perp)**: [Medium Long TR Dataset](tasks/perp/ds/medium_long_tr.csv) (Already translated to Turkish)
 - **Race**: [Race Dataset](https://huggingface.co/datasets/ehovy/race) (Used after translation)
 - **TEOG**: [TEOG 2013 Dataset](https://huggingface.co/datasets/aliardaf/LLMs-Turkish-TEOG-Leaderboard/resolve/main/teog_2013_text.csv) (Turkish dataset)
+- **XCOPA**: [XCOPA Dataset](https://huggingface.co/datasets/cambridgeltl/xcopa) (Already translated to Turkish)
 - **XStoryCloze**: [XStoryCloze Dataset](https://huggingface.co/datasets/juletxara/xstory_cloze) (Used after translation)
 
 ## Setup
