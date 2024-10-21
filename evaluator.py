@@ -42,7 +42,7 @@ if __name__ == '__main__':
                                                               previous_tokens=previous_tokens)
 
 
-    print_results(model_path, task_name, n_shots, limit, ret)
+    print_results(model_path, task_name, n_shots if n_shots is not None else task.n_shots, limit, ret)
 
     if faulty:
         print(f'faulty_prompts: {faulty_prompts}')

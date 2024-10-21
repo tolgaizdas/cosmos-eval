@@ -4,4 +4,5 @@ from .openbookqa.openbookqa import OpenBookQA
 from .perp.perp import Perp
 from .race.race import Race
 from .teog.teog import TEOG
+from .xcopa.xcopa import XCOPA
 from .xstorycloze.xstorycloze import XStoryCloze
