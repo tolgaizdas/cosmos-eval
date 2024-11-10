@@ -16,6 +16,7 @@ def get_parser():
     parser.add_argument('--limit', type=int, required=False, default=None, help='Limit the number of samples')
     parser.add_argument('--previous-token-generator', type=str, required=False, default=None, help='Model for generating previous tokens')
     parser.add_argument('--previous-explicit-tokenizer', type=str, required=False, default=None, help='Explicit tokenizer for previous token generator')
+    parser.add_argument('--previous-conf', type=int, choices=[0, 1], required=False, default=0, help="Define the configuration for previous token generation: 0 or 1.")
     parser.add_argument('--explicit-tokenizer', type=str, required=False, default=None, help='Explicit tokenizer to use')
     parser.add_argument('--from-tf', action='store_true', help='Load model from TensorFlow')
     parser.add_argument('--previous-from-tf', action='store_true', help='Load previous token generator from TensorFlow')

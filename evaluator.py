@@ -11,19 +11,24 @@ if __name__ == '__main__':
             print(f'{arg}: {attr}')
 
     model_path = args.model
-    n_shots = args.n_shots
     task_name = args.task
+
+    from_tf = args.from_tf
+    explicit_tokenizer = args.explicit_tokenizer
+
+    n_shots = args.n_shots
     device = args.device
     limit = args.limit
     faulty = args.print_faulty
     include_choices = args.include_choices_in_prompt
+
+    # Parameters for previous tokens
     previous_token_generator = args.previous_token_generator
     previous_explicit_tokenizer = args.previous_explicit_tokenizer
-    from_tf = args.from_tf
     previous_from_tf = args.previous_from_tf
-    explicit_tokenizer = args.explicit_tokenizer
-
+    previous_conf = args.previous_conf
     previous_tokens = previous_token_generator is not None  # If previous_token_generator is provided, use previous tokens
+    assert not (previous_tokens and previous_conf is None), "previous_conf is not provided."
 
     model, tokenizer = load_model_and_tokenizer(model_path, device, from_tf=from_tf, explicit_tokenizer=explicit_tokenizer)
 
@@ -39,7 +44,8 @@ if __name__ == '__main__':
                                                               limit=limit,
                                                               faulty=faulty,
                                                               include_choices=include_choices,
-                                                              previous_tokens=previous_tokens)
+                                                              previous_tokens=previous_tokens,
+                                                              previous_conf=previous_conf)
 
 
     print_results(model_path, task_name, n_shots if n_shots is not None else task.n_shots, limit, ret)

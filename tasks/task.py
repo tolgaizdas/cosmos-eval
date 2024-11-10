@@ -23,9 +23,10 @@ class Task(ABC):
 
         self.prompt_generator = PromptGenerator(prompt_intro, prompt_conclusion)
 
-    def get_prompt(self, data, include_choices=False, previous_tokens=False):
+    def get_prompt(self, data, include_choices=False, previous_tokens=False, previous_conf=None):
         def build_prompt(context, choices, gold_text=None):
-            return self.prompt_generator.generate_prompt(context, choices, gold_text=gold_text, include_choices=include_choices, previous_tokens=previous_tokens)
+            prev_tokens = previous_tokens and previous_conf == 0  # Add previous tokens for every shot
+            return self.prompt_generator.generate_prompt(context, choices, gold_text=gold_text, include_choices=include_choices, previous_tokens=prev_tokens)
 
         ctx, ctx_choices, _, _ = self.get_attributes(data)
 
@@ -56,9 +57,14 @@ class Task(ABC):
 
         prompt.append(build_prompt(ctx, ctx_choices))
 
+        # Add previous tokens at the beginning of the whole prompt
+        if previous_tokens and previous_conf == 1:
+            prompt_str = "".join(prompt)
+            return f"{self.prompt_generator.generate_previous_tokens(prompt_str)}\n\n{prompt_str}"
+
         return "".join(prompt)
 
-    def eval_task(self, model, tokenizer, metrics, limit=None, faulty=False, include_choices=False, previous_tokens=False):
+    def eval_task(self, model, tokenizer, metrics, limit=None, faulty=False, include_choices=False, previous_tokens=False, previous_conf=None):
         model.eval()
 
         metric_args = {metric: [] for metric in metrics}
@@ -74,7 +80,7 @@ class Task(ABC):
                 continue
 
             if "acc" in metrics or "acc_norm" in metrics:
-                prompt = self.get_prompt(data, include_choices=include_choices, previous_tokens=previous_tokens)
+                prompt = self.get_prompt(data, include_choices=include_choices, previous_tokens=previous_tokens, previous_conf=previous_conf)
                 results, results_norm = get_results(model, tokenizer, prompt, choices, model.device)
 
                 # Accuracy
